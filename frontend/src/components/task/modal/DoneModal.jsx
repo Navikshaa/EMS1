@@ -25,7 +25,7 @@ const DoneModal = ({
           onClick={onClose}
           aria-label="Close"
         >
-          ✖️
+          ✖️ close
         </button>
 
         <h3 className="text-lg font-semibold mb-4">Mark Task as Done</h3>
