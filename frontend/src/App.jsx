@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboad";
 import EmployeeDashboard from "./pages/EmployeeDashboad";

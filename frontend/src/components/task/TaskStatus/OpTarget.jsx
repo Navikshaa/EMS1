@@ -82,7 +82,9 @@ const OpTargetList = () => {
         const response = await axios.get("http://localhost:3000/api/salestask");
         const allTasks = response.data || [];
 
-        const doneTasks = allTasks.filter((task) => task.status === "done");
+        const doneTasks = allTasks.filter(
+          (task) => task.status === "partial_done"
+        );
         const pendingTasks = allTasks.filter(
           (task) => task.status === "pending"
         );
