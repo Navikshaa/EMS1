@@ -194,7 +194,7 @@ const OpTable = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ status: "done" }),
+          body: JSON.stringify({ status: "partial_done" }),
         }
       );
 
@@ -205,7 +205,7 @@ const OpTable = () => {
         item._id === id ? { ...item, status: updatedItem.status } : item
       );
       setSalesData(updatedData);
-      markClicked(id, "done");
+      markClicked(id, "partial_done");
       alert("Status updated to done");
     } catch (error) {
       console.error("Status update error:", error);
@@ -379,7 +379,7 @@ const OpTable = () => {
                           }
                           className={`w-10 h-10 flex items-center justify-center rounded-full ${
                             clicked[item._id]?.certificate
-                              ? "bg-green-300 cursor-not-allowed"
+                              ? "bg-yellow-300 cursor-not-allowed"
                               : "bg-gray-600 hover:bg-gray-800 text-white"
                           }`}
                           title="Download Certificate"
@@ -397,7 +397,7 @@ const OpTable = () => {
                           }
                           className={`w-10 h-10 flex items-center justify-center rounded-full ${
                             clicked[item._id]?.internship
-                              ? "bg-green-300 cursor-not-allowed"
+                              ? "bg-yellow-300 cursor-not-allowed"
                               : "bg-gray-600 hover:bg-gray-800 text-white"
                           }`}
                           title="Download Internship Certificate"
@@ -415,7 +415,7 @@ const OpTable = () => {
                           }
                           className={`w-10 h-10 flex items-center justify-center rounded-full ${
                             clicked[item._id]?.offer
-                              ? "bg-green-300 cursor-not-allowed"
+                              ? "bg-yellow-300 cursor-not-allowed"
                               : "bg-gray-600 hover:bg-gray-800 text-white"
                           }`}
                           title="Download Offer Letter"
@@ -427,12 +427,12 @@ const OpTable = () => {
                         <button
                           onClick={() => handleMarkAsDone(item._id)}
                           className={`w-10 h-10 flex items-center justify-center rounded-full ${
-                            clicked[item._id]?.done
-                              ? "bg-green-300 cursor-not-allowed"
+                            clicked[item._id]?.partial_done
+                              ? "bg-yellow-300 cursor-not-allowed"
                               : "bg-gray-600 hover:bg-gray-800 text-white"
                           }`}
                           title="Mark as Done"
-                          disabled={clicked[item._id]?.done}
+                          disabled={clicked[item._id]?.partial_done}
                         >
                           <FaCheckCircle size={18} />
                         </button>
