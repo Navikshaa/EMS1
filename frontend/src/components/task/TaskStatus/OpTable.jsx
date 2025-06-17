@@ -247,7 +247,7 @@ const OpTable = () => {
   ];
 
   return (
-    <div className="p-4 bg-white min-h-screen flex flex-col items-center">
+    <div className=" bg-white min-h-screen flex flex-col items-center">
       <div className="w-full max-w-[1200px] bg-white rounded-lg">
         <div className="border-b px-4 py-3 flex flex-col sm:flex-row gap-3">
           <input
@@ -258,7 +258,7 @@ const OpTable = () => {
               setSearchName(e.target.value);
               setCurrentPage(1);
             }}
-            className="rounded-md p-2 w-48 border"
+            className="rounded-lg p-2 w-48 border"
           />
           <input
             type="date"
@@ -267,7 +267,7 @@ const OpTable = () => {
               setSearchDate(e.target.value);
               setCurrentPage(1);
             }}
-            className="rounded-md p-2 w-48 border"
+            className="rounded-lg p-2 w-48 border"
           />
         </div>
 

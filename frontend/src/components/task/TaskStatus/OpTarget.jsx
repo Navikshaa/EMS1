@@ -7,7 +7,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-  LabelList, // ✅ import LabelList
 } from "recharts";
 import bgImage from "../../../assets/images/Task_bg.jpeg";
 
@@ -33,6 +32,8 @@ const getWeekDates = () => {
   }
   return result;
 };
+
+const formatDate = (date) => date.toISOString().split("T")[0];
 
 const CustomGauge = ({ value }) => {
   const percent = Math.min(Math.max(value, 0), 100);
@@ -83,9 +84,7 @@ const OpTargetList = () => {
         const allTasks = response.data || [];
 
         const doneTasks = allTasks.filter((task) => task.status === "done");
-        const pendingTasks = allTasks.filter(
-          (task) => task.status === "pending"
-        );
+        const pendingTasks = allTasks.filter((task) => task.status === "pending");
 
         setTaskCompletedPoints(doneTasks.length);
         setTaskInProgressPoints(pendingTasks.length);
@@ -93,13 +92,11 @@ const OpTargetList = () => {
         const weekDates = getWeekDates();
 
         const grouped = weekDates.map((dateObj) => {
-          const dateStr = dateObj.toLocaleDateString("en-CA"); // local format YYYY-MM-DD
+          const dateStr = formatDate(dateObj);
           const day = dateObj.toLocaleDateString("en-US", { weekday: "long" });
 
           const countForDay = doneTasks.filter((task) => {
-            const taskDate = new Date(task.updatedAt).toLocaleDateString(
-              "en-CA"
-            );
+            const taskDate = formatDate(new Date(task.updatedAt));
             return taskDate === dateStr;
           }).length;
 
@@ -189,7 +186,6 @@ const OpTargetList = () => {
                     dataKey="taskCount"
                     radius={[10, 10, 0, 0]}
                     isAnimationActive={false}
-                    label={false} // ✅ disables any label
                   >
                     {barData.map((entry, idx) => (
                       <Cell key={idx} fill={entry.color} />

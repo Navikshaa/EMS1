@@ -88,6 +88,7 @@ const generateTraining = async (name, date, domain) => {
   // Draw actual date
   page.drawText(issuedOn, {
     x: 220,
+  });
   // Draw date
   page.drawText(formattedDate, {
     x: 210,
