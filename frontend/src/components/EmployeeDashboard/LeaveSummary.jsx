@@ -16,6 +16,14 @@ const LeaveSummary = ({ userId }) => {
     sickLeave: 12,
   });
 
+  const calculateLeaveDays = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const timeDiff = end - start;
+    const dayCount = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+    return Math.max(dayCount, 0);
+  };
+
   useEffect(() => {
     const fetchLeaves = async () => {
       try {
@@ -29,23 +37,27 @@ const LeaveSummary = ({ userId }) => {
           (leave) => leave.status === "Approved"
         );
 
-        // Count approved leaves by type
-        const approvedCounts = approvedLeaves.reduce(
-          (acc, leave) => {
-            if (leave.leaveType === "Casual Leave") acc.casual++;
-            else if (leave.leaveType === "Sick Leave") acc.sick++;
-            else acc.other++; // for earned or any other leave types
-            acc.total++;
-            return acc;
-          },
-          { casual: 0, sick: 0, other: 0, total: 0 }
-        );
+        // Initialize counters
+        let casualUsed = 0;
+        let sickUsed = 0;
+        let earnedUsed = 0;
+        let totalUsed = 0;
+
+        approvedLeaves.forEach((leave) => {
+          const days = calculateLeaveDays(leave.startDate, leave.endDate);
+
+          if (leave.leaveType === "Casual Leave") casualUsed += days;
+          else if (leave.leaveType === "Sick Leave") sickUsed += days;
+          else earnedUsed += days;
+
+          totalUsed += days;
+        });
 
         setLeaveStats({
-          totalLeave: 36 - approvedCounts.total,
-          casualLeave: 24 - approvedCounts.casual,
-          earnedLeave: 12 - approvedCounts.other,
-          sickLeave: 12 - approvedCounts.sick,
+          totalLeave: 36 - totalUsed,
+          casualLeave: 24 - casualUsed,
+          earnedLeave: 12 - earnedUsed,
+          sickLeave: 12 - sickUsed,
         });
       } catch (error) {
         console.error("Failed to fetch leave data:", error);

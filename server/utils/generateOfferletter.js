@@ -20,7 +20,7 @@ const generateRandomCode = (length = 10) => {
 
 const generateOfferLetter = async (name, domain, startDate, endDate) => {
   const pdfDoc = await PDFDocument.create();
-  const page = pdfDoc.addPage([842, 595]);
+  const page = pdfDoc.addPage([1191, 842]);
 
   // Embed template
   const templatePath = path.resolve(
@@ -56,51 +56,51 @@ const generateOfferLetter = async (name, domain, startDate, endDate) => {
   const durationDays = Math.round(durationMs / (1000 * 60 * 60 * 24)) + 1;
 
   page.drawText(` ${name}`, {
-    x: 75,
-    y: 503,
-    size: 12,
+    x: 90,
+    y: 712,
+    size: 14,
     font: fontBold,
     color: rgb(0, 0, 0),
   });
   page.drawText(` ${name}`, {
-    x: 40,
-    y: 98,
-    size: 12,
+    x: 45,
+    y: 137,
+    size: 14,
     font: fontBold,
     color: rgb(0, 0, 0),
   });
   page.drawText(` ${domain}`, {
-    x: 400,
-    y: 455,
-    size: 12,
+    x: 535,
+    y: 645,
+    size: 14,
     font: fontBold,
     color: rgb(0, 0, 0),
   });
   page.drawText(` ${domain} Intern`, {
-    x: 165,
-    y: 400,
-    size: 12,
+    x: 235,
+    y: 567,
+    size: 14,
     font: fontBold,
     color: rgb(0, 0, 0),
   });
   page.drawText(` ${formattedStart}`, {
-    x: 150,
-    y: 377,
-    size: 12,
+    x: 200,
+    y: 531,
+    size: 14,
     font: fontRegular,
     color: rgb(0.1, 0.1, 0.1),
   });
   page.drawText(` ${formattedEnd}`, {
-    x: 150,
-    y: 365,
-    size: 12,
+    x: 195,
+    y: 516,
+    size: 14,
     font: fontRegular,
     color: rgb(0.1, 0.1, 0.1),
   });
   page.drawText(`${durationDays} day${durationDays > 1 ? "s" : ""}`, {
-    x: 150,
-    y: 355,
-    size: 12,
+    x: 195,
+    y: 500,
+    size: 14,
     font: fontRegular,
     color: rgb(0.1, 0.1, 0.1),
   });

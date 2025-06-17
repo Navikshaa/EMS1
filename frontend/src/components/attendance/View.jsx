@@ -24,14 +24,21 @@ const AttendanceCalendar = () => {
       day: "numeric",
     });
 
-  const normalizeStatus = (status) => {
-    const normalized = status?.toLowerCase() || "";
-    if (normalized.includes("on time")) return "On Time";
-    if (normalized.includes("late")) return "Late";
-    if (normalized.includes("half")) return "Half Day";
-    if (normalized.includes("holiday")) return "Holiday";
-    if (normalized.includes("sunday")) return "Sunday";
-    return "No Login";
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "On Time":
+        return "bg-green-500";
+      case "Late":
+        return "bg-orange-400";
+      case "Half Day":
+        return "bg-pink-400";
+      case "Holiday":
+        return "bg-gray-400";
+      case "Sunday":
+        return "bg-blue-400";
+      default:
+        return "bg-gray-300"; // No Login or others
+    }
   };
 
   const fetchAttendance = async () => {
@@ -40,57 +47,41 @@ const AttendanceCalendar = () => {
 
       const res = await axios.get(
         `http://localhost:3000/api/login-history/${user._id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
-      const groupedByDate = {};
-
-      res.data.data.forEach((entry) => {
-        let dateObj;
-
-        if (entry.loginTime) {
-          dateObj = new Date(entry.loginTime);
-          if (user?.department === "it" && dateObj.getHours() < 12) {
-            dateObj.setDate(dateObj.getDate() - 1);
-          }
-        } else if (entry.date && !isNaN(new Date(entry.date))) {
-          dateObj = new Date(entry.date);
-        } else return;
-
-        const dateStr = dateObj.toLocaleDateString("en-CA");
-
-        if (!groupedByDate[dateStr]) {
-          groupedByDate[dateStr] = [];
-        }
-        groupedByDate[dateStr].push(entry);
-      });
-
-      const formatted = Object.entries(groupedByDate).map(([date, entries]) => {
-        const entry = entries[0];
+      const formatted = res.data.data.map((entry) => {
         const loginTime = entry.loginTime
-          ? new Date(entry.loginTime).toLocaleTimeString("en-GB", {
-              hour: "2-digit",
+          ? new Date(entry.loginTime).toLocaleTimeString("en-US", {
+              hour: "numeric",
               minute: "2-digit",
+              hour12: true,
             })
           : null;
 
         const logoutTime = entry.logoutTime
-          ? new Date(entry.logoutTime).toLocaleTimeString("en-GB", {
-              hour: "2-digit",
+          ? new Date(entry.logoutTime).toLocaleTimeString("en-US", {
+              hour: "numeric",
               minute: "2-digit",
+              hour12: true,
             })
           : null;
 
         return {
-          date,
-          status: normalizeStatus(entry.status),
+          date: new Date(entry.date).toLocaleDateString("en-CA"),
+          status: entry.status || "No Login",
           loginTime,
           logoutTime,
         };
       });
 
-      setAttendanceData(formatted.reverse());
-      setFilteredData(formatted.reverse());
+      const reversed = [...formatted].reverse();
+      setAttendanceData(reversed);
+      setFilteredData(reversed);
     } catch (err) {
       console.error("Error fetching login history:", err);
     }
@@ -113,23 +104,6 @@ const AttendanceCalendar = () => {
   const clearFilter = () => {
     setSelectedDate(null);
     setFilteredData(attendanceData);
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "On Time":
-        return "bg-green-500";
-      case "Late":
-        return "bg-orange-400";
-      case "Half Day":
-        return "bg-pink-400";
-      case "Holiday":
-        return "bg-gray-400";
-      case "Sunday":
-        return "bg-blue-400";
-      default:
-        return "bg-gray-300";
-    }
   };
 
   return (
@@ -180,10 +154,14 @@ const AttendanceCalendar = () => {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2 text-sm">
                 <FaRegClock className="text-gray-500" />
-                <span className="font-semibold">{formatDisplayDate(entry.date)}</span>
+                <span className="font-semibold">
+                  {formatDisplayDate(entry.date)}
+                </span>
               </div>
               <span
-                className={`text-white text-xs font-semibold px-2 py-1 rounded-full ${getStatusColor(entry.status)}`}
+                className={`text-white text-xs font-semibold px-2 py-1 rounded-full ${getStatusColor(
+                  entry.status
+                )}`}
               >
                 {entry.status.toUpperCase()}
               </span>

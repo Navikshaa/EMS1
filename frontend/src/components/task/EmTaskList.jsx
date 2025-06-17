@@ -19,12 +19,33 @@ const EmTasklist = () => {
   const { user } = useAuth();
 
   const [department, setDepartment] = useState(null);
-    const [selectedSubDep, setSelectedSubDep] = useState("");
+  const [selectedSubDep, setSelectedSubDep] = useState("");
   const [subDepartments, setSubDepartments] = useState([]);
   const [userDesignation, setUserDesignation] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // ✅ Setup audio permission on first interaction
+  useEffect(() => {
+    const allowAudio = () => {
+      localStorage.setItem("audioAllowed", "true");
+      window.removeEventListener("click", allowAudio);
+      window.removeEventListener("keydown", allowAudio);
+      window.removeEventListener("touchstart", allowAudio);
+    };
+
+    window.addEventListener("click", allowAudio);
+    window.addEventListener("keydown", allowAudio);
+    window.addEventListener("touchstart", allowAudio);
+
+    return () => {
+      window.removeEventListener("click", allowAudio);
+      window.removeEventListener("keydown", allowAudio);
+      window.removeEventListener("touchstart", allowAudio);
+    };
+  }, []);
+
+  // ✅ Fetch department & user data
   useEffect(() => {
     const fetchDetails = async () => {
       try {
@@ -32,7 +53,7 @@ const EmTasklist = () => {
         setError(null);
 
         const token = localStorage.getItem("token");
-        // Fetch department data by id
+
         const depRes = await fetch(
           `http://localhost:3000/api/department/${id}`,
           {
@@ -51,7 +72,6 @@ const EmTasklist = () => {
         if (depData.department) {
           setDepartment(depData.department);
 
-          // Map sub_departments (strings) into objects with id & name
           const rawSubs = depData.department.sub_departments || [];
           const mappedSubs = rawSubs.map((subName) => ({
             _id: subName,
@@ -62,7 +82,6 @@ const EmTasklist = () => {
           setError("Department data not found.");
         }
 
-        // Fetch logged-in user's designation
         if (user?._id) {
           const empRes = await fetch(
             `http://localhost:3000/api/employee/user/${user._id}`,
@@ -102,8 +121,13 @@ const EmTasklist = () => {
           : "px-4 py-8"
       }`}
     >
+      <button
+        onClick={() => window.history.back()}
+        className="absolute top-1 left-53 bg-white/80 hover:bg-white px-3 py-1 rounded-full shadow text-1xl"
+      >
+        ←
+      </button>
       <div className="w-[1000px] mx-auto">
-
         {loading && (
           <p className="text-center">Loading department details...</p>
         )}
@@ -112,14 +136,12 @@ const EmTasklist = () => {
 
         {!loading && !error && department && (
           <>
-            {/* Show department and sub-department cards only if department is NOT Sales and NOT Marketing */}
             {department.dep_name !== "Sales" &&
               department.dep_name !== "Marketing" &&
               department.dep_name !== "Operations" &&
               department.dep_name !== "Finance" && (
                 <>
                   <div className="flex justify-center mb-6">
-
                     <div className="w-full mb-8">
                       <h2 className="w-full bg-red-300 rounded-xl shadow-xl p-5 text-center text-2xl font-bold text-gray-800">
                         {department.dep_name}
@@ -134,13 +156,15 @@ const EmTasklist = () => {
                       subDepartments.map((sub) => {
                         const isActive = userDesignation === sub.name;
 
-                                  const isSelected = selectedSubDep === sub.name;
+                        const isSelected = selectedSubDep === sub.name;
 
                         return (
                           <div
                             key={sub._id}
-                             onClick={() => isActive && setSelectedSubDep(sub.name)}
-              className={`w-36 px-4 py-3 text-center rounded-lg text-sm font-bold shadow-lg transition
+                            onClick={() =>
+                              isActive && setSelectedSubDep(sub.name)
+                            }
+                            className={`w-36 px-4 py-3 text-center rounded-lg text-sm font-bold shadow-lg transition
                 ${
                   isActive
                     ? "bg-blue-500 text-white cursor-pointer hover:bg-blue-600"
@@ -148,8 +172,8 @@ const EmTasklist = () => {
                 }
                 ${isSelected ? "ring-2 ring-offset-2 ring-blue-300" : ""}
               `}
-            >
-              {sub.name}
+                          >
+                            {sub.name}
                           </div>
                         );
                       })
@@ -160,7 +184,7 @@ const EmTasklist = () => {
 
             <br />
 
-            {/* Department Specific Sections */}
+            {/* ✅ Department specific components */}
             {department.dep_name === "IT" && (
               <ItTasksSection
                 departmentId={id}
@@ -168,14 +192,12 @@ const EmTasklist = () => {
                 userId={user?._id}
               />
             )}
-
             {department.dep_name === "Sales" && (
               <>
                 <TargetList employeeName={user?.name} />
                 <SalesTable />
               </>
             )}
-
             {department.dep_name === "Marketing" && (
               <>
                 <MarketTargetList employeeName={user?.name} />

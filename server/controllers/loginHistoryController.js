@@ -30,28 +30,19 @@ const createOrUpdateLoginHistory = async ({ userId, loginAt, logoutAt }) => {
 
   const loginDate = loginAt ? new Date(loginAt) : null;
   const logoutDate = logoutAt ? new Date(logoutAt) : null;
+  const effectiveLogin = loginDate || logoutDate;
 
-  let recordDate = loginDate || logoutDate || new Date();
-  if (rules.isNightShift) {
-  if (loginDate && loginDate.getHours() < 12) {
-    // Login between 12 AM to 11:59 AM → belongs to previous day's shift
-    recordDate = new Date(loginDate);
-    recordDate.setDate(recordDate.getDate() - 1);
-  } else if (logoutDate && logoutDate.getHours() < 12) {
-    // Logout in the morning, still belongs to previous day
-    recordDate = new Date(logoutDate);
+  // Determine logical shift date
+  let recordDate = new Date(effectiveLogin || new Date());
+  if (rules.isNightShift && recordDate.getHours() < 12) {
     recordDate.setDate(recordDate.getDate() - 1);
   }
-}
 
+  const dateStr = recordDate.toLocaleDateString("en-CA"); // yyyy-mm-dd
+  const dayStart = new Date(`${dateStr}T00:00:00`);
+  const dayEnd = new Date(`${dateStr}T23:59:59`);
 
-  const localDate = new Date(recordDate);
-const dateStr = localDate.toLocaleDateString("en-CA"); // yyyy-mm-dd
-
-const dayStart = new Date(`${dateStr}T00:00:00`);
-const dayEnd = new Date(`${dateStr}T23:59:59`);
-
-
+  // Find existing record
   let history = await LoginHistory.findOne({
     userId,
     loginAt: { $gte: dayStart, $lte: dayEnd },
@@ -61,12 +52,15 @@ const dayEnd = new Date(`${dateStr}T23:59:59`);
     if (loginDate && loginDate < history.loginAt) {
       history.loginAt = loginDate;
     }
-
     if (logoutDate && (!history.logoutAt || logoutDate > history.logoutAt)) {
       history.logoutAt = logoutDate;
     }
 
-    history.status = calculateStatus(history.loginAt, rules, dateStr);
+    history.status = calculateStatus(
+      history.loginAt || history.logoutAt,
+      rules,
+      dateStr
+    );
     history.username = user.username;
     history.department = depName;
 
@@ -74,7 +68,8 @@ const dayEnd = new Date(`${dateStr}T23:59:59`);
     return history;
   }
 
-  const status = calculateStatus(loginDate, rules, dateStr);
+  // Create new history
+  const status = calculateStatus(effectiveLogin, rules, dateStr);
   const newHistory = new LoginHistory({
     userId,
     username: user.username,
@@ -82,6 +77,7 @@ const dayEnd = new Date(`${dateStr}T23:59:59`);
     loginAt: loginDate,
     logoutAt: logoutDate,
     status,
+    shiftDate: dateStr,
   });
 
   await newHistory.save();
@@ -92,37 +88,37 @@ const dayEnd = new Date(`${dateStr}T23:59:59`);
 const getLoginHistoryByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
-
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid userId format." });
     }
 
-    const objectId = new mongoose.Types.ObjectId(userId);
-
-    const loginHistory = await LoginHistory.find({ userId: objectId })
+    const loginHistory = await LoginHistory.find({ userId })
       .sort({ loginAt: -1 })
-      .populate("userId", "username")
-      .exec();
+      .populate("userId", "username");
 
     if (!loginHistory.length) {
       return res.status(404).json({ message: "No login history found." });
     }
 
-    const employee = await Employee.findOne({ userId: objectId }).populate(
-      "department"
-    );
-    const depName = employee?.department?.dep_name || "Unknown";
+    const employee = await Employee.findOne({ userId }).populate("department");
+    const depName = employee?.department?.dep_name?.toLowerCase() || "unknown";
+    const isNightShift = departmentTimingRules[depName]?.isNightShift;
 
     const formatted = loginHistory.map((entry) => {
-      const loginDate = new Date(entry.loginAt);
-      const logoutDate = entry.logoutAt ? new Date(entry.logoutAt) : null;
+      let loginDate = entry.loginAt ? new Date(entry.loginAt) : null;
+      let logoutDate = entry.logoutAt ? new Date(entry.logoutAt) : null;
+      let effectiveDate = loginDate || logoutDate;
+
+      if (effectiveDate && isNightShift && effectiveDate.getHours() < 12) {
+        effectiveDate.setDate(effectiveDate.getDate() - 1);
+      }
 
       return {
         username: entry.userId?.username || "Unknown",
         department: depName,
-        date: loginDate.toISOString(),
-        loginTime: loginDate.toISOString(),
-        logoutTime: logoutDate ? logoutDate.toISOString() : null,
+        date: effectiveDate?.toISOString() || null,
+        loginTime: loginDate?.toISOString() || null,
+        logoutTime: logoutDate?.toISOString() || null,
         status: entry.status || "Unknown",
       };
     });
@@ -138,7 +134,6 @@ const getLoginHistoryByUserId = async (req, res) => {
 const getLoginHistoryByDepartmentId = async (req, res) => {
   try {
     const { depId } = req.params;
-
     if (!mongoose.Types.ObjectId.isValid(depId)) {
       return res.status(400).json({ message: "Invalid department ID." });
     }
@@ -149,7 +144,6 @@ const getLoginHistoryByDepartmentId = async (req, res) => {
     }
 
     const departmentName = department.dep_name;
-
     const loginHistory = await LoginHistory.find({
       department: new RegExp("^" + departmentName + "$", "i"),
     }).sort({ loginAt: -1 });
@@ -161,7 +155,6 @@ const getLoginHistoryByDepartmentId = async (req, res) => {
     const response = loginHistory.map((entry) => {
       const loginDate = new Date(entry.loginAt);
       const logoutDate = entry.logoutAt ? new Date(entry.logoutAt) : null;
-
       return {
         username: entry.username || "Unknown",
         department: entry.department || "Unknown",
@@ -179,11 +172,11 @@ const getLoginHistoryByDepartmentId = async (req, res) => {
   }
 };
 
-// Edit login history entry by userId and date
+// Edit login history by userId and date
 const editLoginHistoryByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { loginAt, logoutAt, date } = req.body;
+    const { loginTime, logoutTime, date } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid userId format." });
@@ -193,12 +186,9 @@ const editLoginHistoryByUserId = async (req, res) => {
       return res.status(400).json({ message: "Date is required." });
     }
 
-    const localDate = new Date(recordDate);
-const dateStr = localDate.toLocaleDateString("en-CA"); // yyyy-mm-dd
-
-const dayStart = new Date(`${dateStr}T00:00:00`);
-const dayEnd = new Date(`${dateStr}T23:59:59`);
-
+    const dateStr = new Date(date).toLocaleDateString("en-CA");
+    const dayStart = new Date(`${dateStr}T00:00:00`);
+    const dayEnd = new Date(`${dateStr}T23:59:59`);
 
     const history = await LoginHistory.findOne({
       userId,
@@ -216,15 +206,16 @@ const dayEnd = new Date(`${dateStr}T23:59:59`);
     const rules = departmentTimingRules[depName];
 
     if (!rules) {
-      return res
-        .status(400)
-        .json({ message: `Timing rules not found for department: ${depName}` });
+      return res.status(400).json({
+        message: `Timing rules not found for department: ${depName}`,
+      });
     }
 
-    if (loginAt) history.loginAt = new Date(loginAt);
-    if (logoutAt) history.logoutAt = new Date(logoutAt);
+    if (loginTime) history.loginAt = new Date(loginTime);
+    if (logoutTime) history.logoutAt = new Date(logoutTime);
 
-    history.status = calculateStatus(history.loginAt, rules, dateStr);
+    const effective = history.loginAt || history.logoutAt;
+    history.status = calculateStatus(effective, rules, dateStr);
 
     await history.save();
     return res
@@ -236,9 +227,34 @@ const dayEnd = new Date(`${dateStr}T23:59:59`);
   }
 };
 
+const getAllLoginHistoryUsers = async (req, res) => {
+  try {
+    // Fetch distinct user IDs that have login history
+    const uniqueUserIds = await LoginHistory.distinct("userId");
+
+    // Now fetch their employee and user info
+    const employees = await Employee.find({ userId: { $in: uniqueUserIds } })
+      .populate("userId", "username")
+      .populate("department", "dep_name");
+
+    const formatted = employees.map((emp) => ({
+      userId: emp.userId?._id,
+      employeeId: emp.employeeId || "-",
+      name: emp.userId?.username || "Unknown",
+      department: emp.department?.dep_name || "Unknown",
+    }));
+
+    res.status(200).json({ data: formatted });
+  } catch (error) {
+    console.error("Error fetching attendance users:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export {
-  editLoginHistoryByUserId,
-  getLoginHistoryByDepartmentId,
-  getLoginHistoryByUserId,
   createOrUpdateLoginHistory,
+  getLoginHistoryByUserId,
+  getLoginHistoryByDepartmentId,
+  editLoginHistoryByUserId,
+  getAllLoginHistoryUsers,
 };

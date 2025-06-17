@@ -58,14 +58,12 @@ const generateTraining = async (name, date, domain) => {
 
   // Draw name
   page.drawText(name, {
-
-    x: 29,
+    x: 27,
     y: 390,
     size: 24,
     font,
     color: rgb(0, 0, 0),
   });
-
 
   // Draw domain
   page.drawText(`${domain}`, {

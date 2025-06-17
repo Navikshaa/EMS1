@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom"; 
 const AttendanceUserList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     let isMounted = true;
 
-    const fetchAttendanceUsers = async () => {
+    const fetchUsers = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/login-history");
         if (!response.ok) throw new Error("Failed to fetch users");
-
         const data = await response.json();
-
-        if (isMounted) {
-          setUsers(data.data || []); // ✅ Use data.data
-        }
+        if (isMounted) setUsers(data.data || []);
       } catch (err) {
         if (isMounted) setError(err.message);
       } finally {
@@ -27,15 +23,14 @@ const AttendanceUserList = () => {
       }
     };
 
-    fetchAttendanceUsers();
-
+    fetchUsers();
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const handleView = (user) => {
-    navigate(`view/${user.userId}`);
+  const handleView = (userId) => {
+    navigate(`/employee-dashboard/hr/attendance/${userId}`);
   };
 
   if (loading)
@@ -75,20 +70,20 @@ const AttendanceUserList = () => {
                 </td>
               </tr>
             ) : (
-              users.map((user) => (
-                <tr key={user.userId} className="border-b hover:bg-gray-50">
+              users.map((user, idx) => (
+                <tr key={idx} className="border-b hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-800">
                     {user.employeeId || "-"}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-800">
-                    {user.name || "-"}
+                    {user.employeeId?.name || "-"}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-800">
                     {user.department || "-"}
                   </td>
                   <td className="px-6 py-4">
                     <button
-                      onClick={() => handleView(user)}
+                      onClick={() => handleView(user.userId)}
                       className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-md transition"
                     >
                       View

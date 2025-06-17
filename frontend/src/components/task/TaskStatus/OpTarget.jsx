@@ -35,6 +35,7 @@ const getWeekDates = () => {
 
 const formatDate = (date) => date.toISOString().split("T")[0];
 
+
 const CustomGauge = ({ value }) => {
   const percent = Math.min(Math.max(value, 0), 100);
   const rotation = (percent / 100) * 180;
@@ -58,7 +59,6 @@ const CustomGauge = ({ value }) => {
         <circle
           cx="50"
           cy="50"
-          r="4"
           fill="#9ca3af"
           transform={`rotate(${rotation}, 50, 50) translate(0, -40)`}
         />
@@ -85,11 +85,36 @@ const OpTargetList = () => {
 
         const doneTasks = allTasks.filter((task) => task.status === "done");
         const pendingTasks = allTasks.filter((task) => task.status === "pending");
+        const now = new Date();
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(now.getDate() - 6); // Last 7 days including today
+
+        const recentPartialDone = allTasks.filter(
+          (task) =>
+            task.status === "partial_done" &&
+            new Date(task.updatedAt) >= oneWeekAgo
+        );
+
+        const permanentDone = allTasks.filter((task) => task.status === "done");
+
+        const doneTasks = [...permanentDone, ...recentPartialDone];
+        const pendingTasks = allTasks.filter(
+          (task) => task.status === "pending"
+        );
 
         setTaskCompletedPoints(doneTasks.length);
         setTaskInProgressPoints(pendingTasks.length);
 
-        const weekDates = getWeekDates();
+        // Group partial_done by day of the week for the last 7 days
+        const dayMap = {
+          Monday: 0,
+          Tuesday: 0,
+          Wednesday: 0,
+          Thursday: 0,
+          Friday: 0,
+          Saturday: 0,
+          Sunday: 0,
+        };
 
         const grouped = weekDates.map((dateObj) => {
           const dateStr = formatDate(dateObj);
@@ -105,7 +130,29 @@ const OpTargetList = () => {
             taskCount: countForDay,
             color: dayColors[day] || "#ccc",
           };
+        allTasks.forEach((task) => {
+          const updatedAt = new Date(task.updatedAt);
+          if (
+            task.status === "partial_done" &&
+            updatedAt >= oneWeekAgo &&
+            updatedAt <= now
+          ) {
+            const day = updatedAt.toLocaleDateString("en-US", {
+              weekday: "long",
+            });
+            if (dayMap[day] !== undefined) {
+              dayMap[day]++;
+            }
+          }
         });
+
+        const grouped = Object.entries(dayMap)
+          .filter(([day]) => day !== "Sunday") // Optional: remove Sunday
+          .map(([day, count]) => ({
+            day,
+            taskCount: count,
+            color: dayColors[day] || "#ccc",
+          }));
 
         setBarData(grouped);
       } catch (err) {
@@ -130,6 +177,12 @@ const OpTargetList = () => {
       className="p-4 rounded-lg shadow-md flex flex-col space-y-6 bg-cover bg-center"
       style={{ backgroundImage: `url(${bgImage})` }}
     >
+      <button
+        onClick={() => window.history.back()}
+        className="absolute top-6 left-45 bg-white/80 hover:bg-white px-3 py-1 rounded-full shadow text-2xl"
+      >
+        ←
+      </button>
       <div className="flex flex-col md:flex-row justify-between items-start gap-6 w-full min-w-0">
         {/* Bar Chart */}
         <div className="w-full md:w-1/3" style={{ height: 150, minWidth: 0 }}>

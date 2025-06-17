@@ -31,7 +31,7 @@ const salesSchema = new mongoose.Schema(
     // ✅ status field
     status: {
       type: String,
-      enum: ["pending", "done"],
+      enum: ["pending", "partial_done", "done", "default"],
       default: "pending",
     },
 

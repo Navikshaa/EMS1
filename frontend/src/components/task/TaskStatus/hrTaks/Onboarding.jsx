@@ -3,7 +3,7 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import Hrtask from "../../../../assets/images/task_bg.jpeg"
+import Hrtask from "../../../../assets/images/task_bg.jpeg";
 
 const AddCandidate = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,11 +30,12 @@ const AddCandidate = () => {
   };
 
   const getRemainingDays = (onboardedAt) => {
-  if (!onboardedAt) return null;
-  const diff = 7 - Math.floor((Date.now() - new Date(onboardedAt)) / (1000 * 60 * 60 * 24));
-  return diff > 0 ? diff : 0;
-};
-
+    if (!onboardedAt) return null;
+    const diff =
+      7 -
+      Math.floor((Date.now() - new Date(onboardedAt)) / (1000 * 60 * 60 * 24));
+    return diff > 0 ? diff : 0;
+  };
 
   const fetchCandidates = async () => {
     setLoading(true);
@@ -89,10 +90,6 @@ const AddCandidate = () => {
     }
   };
 
-
-
-
-
   const handleStatusUpdate = async (id, status) => {
     try {
       await axios.patch(`http://localhost:3000/api/candidates/${id}`, {
@@ -109,7 +106,9 @@ const AddCandidate = () => {
     const sorted = [...candidates].sort((a, b) => {
       const valA = a[key]?.toString().toLowerCase();
       const valB = b[key]?.toString().toLowerCase();
-      return order === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
+      return order === "asc"
+        ? valA.localeCompare(valB)
+        : valB.localeCompare(valA);
     });
     setCandidates(sorted);
     setSortKey(key);
@@ -123,9 +122,9 @@ const AddCandidate = () => {
     XLSX.writeFile(workbook, "candidates.xlsx");
   };
 
-  
-
-  const onboardedCount = candidates.filter((c) => c.status === "onboarded").length;
+  const onboardedCount = candidates.filter(
+    (c) => c.status === "onboarded"
+  ).length;
   const incompleteCount = candidates.length - onboardedCount;
   const onboardedPercentage = candidates.length
     ? Math.round((onboardedCount / candidates.length) * 100)
@@ -142,105 +141,133 @@ const AddCandidate = () => {
       <div className={isOpen ? "blur-sm pointer-events-none select-none" : ""}>
         {/* Header */}
         {/* Header Section with Graphs */}
-<div
-  className="bg-cover bg-center p-10 h-[300px] flex flex-col md:flex-row justify-between items-center gap-6 relative"
-  style={{ backgroundImage: `url(${Hrtask})` }}
->
-  {/* LEFT GRAPH - ONBOARDING COMPLETE */}
-  <div className="flex flex-col items-center w-[300px]">
-    <div className="relative w-[260px] h-[180px]">
-      <svg className="absolute top-0 left-0" width="100%" height="100%" viewBox="-10 10 120 20">
-        {/* Background Arc */}
-        <path
-          d="M0,50 A50,50 0 0,1 100,50"
-          fill="none"
-          stroke="#d1d5db"
-          strokeWidth="14"
-        />
-        {/* Foreground Arc (Dynamic) */}
-        <path
-          d="M0,50 A50,50 0 0,1 100,50"
-          fill="none"
-          stroke="#000"
-          strokeWidth="14"
-          strokeLinecap="round"
-          strokeDasharray="157"
-          strokeDashoffset={157 - (157 * onboardedPercentage) / 100}
-          style={{ transition: "stroke-dashoffset 1s ease-in-out" }}
-        />
-      </svg>
-      {/* Percentage Text */}
-      <div
-        className={`absolute top-[76%] left-[45%] font-bold text-xl ${
-          onboardedPercentage >= 75
-            ? "text-green-600"
-            : onboardedPercentage >= 50
-            ? "text-orange-500"
-            : "text-red-600"
-        }`}
-      >
-        {onboardedPercentage}%
-      </div>
-    </div>
-    <div className="text-md font-bold mt-2 text-center">ON-BOARDING COMPLETE</div>
-  </div>
 
-  {/* CENTER COUNT */}
-  <div className="flex flex-col items-center justify-center text-center">
-    <div className="text-5xl font-bold text-black">{onboardedCount}</div>
-    <div className="text-lg font-bold text-black">TOTAL<br />ON-BOARDED</div>
-  </div>
+        <div
+          className="bg-cover bg-center p-10 h-[300px] flex flex-col md:flex-row justify-between items-center gap-6 relative"
+          style={{ backgroundImage: `url(${Hrtask})` }}
+        >
+          <button
+            onClick={() => window.history.back()}
+            className="absolute top-6 left-53 bg-white/80 hover:bg-white px-3 py-1 rounded-full shadow text-2xl"
+          >
+            ←
+          </button>
+          {/* LEFT GRAPH - ONBOARDING COMPLETE */}
+          <div className="flex flex-col items-center w-[300px]">
+            <div className="relative w-[260px] h-[180px]">
+              <svg
+                className="absolute top-0 left-0"
+                width="100%"
+                height="100%"
+                viewBox="-10 10 120 20"
+              >
+                {/* Background Arc */}
+                <path
+                  d="M0,50 A50,50 0 0,1 100,50"
+                  fill="none"
+                  stroke="#d1d5db"
+                  strokeWidth="14"
+                />
+                {/* Foreground Arc (Dynamic) */}
+                <path
+                  d="M0,50 A50,50 0 0,1 100,50"
+                  fill="none"
+                  stroke="#000"
+                  strokeWidth="14"
+                  strokeLinecap="round"
+                  strokeDasharray="157"
+                  strokeDashoffset={157 - (157 * onboardedPercentage) / 100}
+                  style={{ transition: "stroke-dashoffset 1s ease-in-out" }}
+                />
+              </svg>
+              {/* Percentage Text */}
+              <div
+                className={`absolute top-[76%] left-[45%] font-bold text-xl ${
+                  onboardedPercentage >= 75
+                    ? "text-green-600"
+                    : onboardedPercentage >= 50
+                    ? "text-orange-500"
+                    : "text-red-600"
+                }`}
+              >
+                {onboardedPercentage}%
+              </div>
+            </div>
+            <div className="text-md font-bold mt-2 text-center">
+              ON-BOARDING COMPLETE
+            </div>
+          </div>
 
-  {/* RIGHT GRAPH - ONBOARDING INCOMPLETE */}
-  <div className="flex flex-col items-center w-[300px]">
-    <div className="relative w-[260px] h-[160px]">
-      <svg className="absolute top-0 left-0" width="100%" height="100%" viewBox="-10 10 120 20">
-        {/* Background Arc */}
-        <path
-          d="M0,50 A50,50 0 0,1 100,50"
-          fill="none"
-          stroke="#d1d5db"
-          strokeWidth="14"
-        />
-        {/* Foreground Arc (Dynamic) */}
-        <path
-          d="M0,50 A50,50 0 0,1 100,50"
-          fill="none"
-          stroke="#000"
-          strokeWidth="14"
-          strokeLinecap="round"
-          strokeDasharray="157"
-          strokeDashoffset={157 - (157 * incompletePercentage) / 100}
-          style={{ transition: "stroke-dashoffset 1s ease-in-out" }}
-        />
-      </svg>
-      {/* Percentage Text */}
-      <div
-        className={`absolute top-[76%] left-[45%] font-bold text-xl ${
-          incompletePercentage >= 75
-            ? "text-green-600"
-            : incompletePercentage >= 50
-            ? "text-orange-500"
-            : "text-red-600"
-        }`}
-      >
-        {incompletePercentage}%
-      </div>
-    </div>
-    <div className="text-md font-bold mt-2 text-center">ON-BOARDING INCOMPLETE</div>
-  </div>
+          {/* CENTER COUNT */}
+          <div className="flex flex-col items-center justify-center text-center">
+            <div className="text-5xl font-bold text-black">
+              {onboardedCount}
+            </div>
+            <div className="text-lg font-bold text-black">
+              TOTAL
+              <br />
+              ON-BOARDED
+            </div>
+          </div>
 
-  {/* ACTION BUTTONS */}
-  {/* ACTION BUTTONS */}
-<div className="absolute top-4 right-6 flex gap-2">
-  <button
-    onClick={handleOpen}
-    className="bg-black text-white font-bold px-4 py-2 rounded-full"
-  >
-    + ADD CANDIDATE
-  </button>
-</div>
-</div>
+          {/* RIGHT GRAPH - ONBOARDING INCOMPLETE */}
+          <div className="flex flex-col items-center w-[300px]">
+            <div className="relative w-[260px] h-[160px]">
+              <svg
+                className="absolute top-0 left-0"
+                width="100%"
+                height="100%"
+                viewBox="-10 10 120 20"
+              >
+                {/* Background Arc */}
+
+                <path
+                  d="M0,50 A50,50 0 0,1 100,50"
+                  fill="none"
+                  stroke="#d1d5db"
+                  strokeWidth="14"
+                />
+                {/* Foreground Arc (Dynamic) */}
+                <path
+                  d="M0,50 A50,50 0 0,1 100,50"
+                  fill="none"
+                  stroke="#000"
+                  strokeWidth="14"
+                  strokeLinecap="round"
+                  strokeDasharray="157"
+                  strokeDashoffset={157 - (157 * incompletePercentage) / 100}
+                  style={{ transition: "stroke-dashoffset 1s ease-in-out" }}
+                />
+              </svg>
+              {/* Percentage Text */}
+              <div
+                className={`absolute top-[76%] left-[45%] font-bold text-xl ${
+                  incompletePercentage >= 75
+                    ? "text-green-600"
+                    : incompletePercentage >= 50
+                    ? "text-orange-500"
+                    : "text-red-600"
+                }`}
+              >
+                {incompletePercentage}%
+              </div>
+            </div>
+            <div className="text-md font-bold mt-2 text-center">
+              ON-BOARDING INCOMPLETE
+            </div>
+          </div>
+
+          {/* ACTION BUTTONS */}
+          {/* ACTION BUTTONS */}
+          <div className="absolute top-4 right-6 flex gap-2">
+            <button
+              onClick={handleOpen}
+              className="bg-black text-white font-bold px-4 py-2 rounded-full"
+            >
+              + ADD CANDIDATE
+            </button>
+          </div>
+        </div>
 
         {/* Table */}
         <div className="overflow-x-auto mt-4">
@@ -260,7 +287,11 @@ const AddCandidate = () => {
                     ["profile_type", "PROFILE"],
                     ["status", "STATUS"],
                   ].map(([key, label]) => (
-                    <th key={key} className="px-4 py-2 cursor-pointer" onClick={() => handleSort(key)}>
+                    <th
+                      key={key}
+                      className="px-4 py-2 cursor-pointer"
+                      onClick={() => handleSort(key)}
+                    >
                       {label}
                     </th>
                   ))}
@@ -271,32 +302,40 @@ const AddCandidate = () => {
                 {currentCandidates.map((c, index) => (
                   <tr
                     key={index}
-                    className={`text-center ${c.status === "onboarded"
-                      ? "bg-green-100"
-                      : c.status === "rejected"
-                      ? "bg-red-100"
-                      : ""
-                      }`}
+                    className={`text-center ${
+                      c.status === "onboarded"
+                        ? "bg-green-100"
+                        : c.status === "rejected"
+                        ? "bg-red-100"
+                        : ""
+                    }`}
                   >
-                    <td className="border px-2 py-1">{indexOfFirst + index + 1}</td>
+                    <td className="border px-2 py-1">
+                      {indexOfFirst + index + 1}
+                    </td>
                     <td className="border px-2 py-1">{c.candidate_name}</td>
                     <td className="border px-2 py-1">{c.email}</td>
                     <td className="border px-2 py-1">{c.contact_no}</td>
                     <td className="border px-2 py-1">{c.whatsapp_no}</td>
-                    <td className="border px-2 py-1">{c.date_of_joining?.slice(0, 10)}</td>
+                    <td className="border px-2 py-1">
+                      {c.date_of_joining?.slice(0, 10)}
+                    </td>
                     <td className="border px-2 py-1">{c.profile_type}</td>
-<td className="border px-2 py-1">
-  <div>{c.status}</div>
-  {c.status === "onboarded" && c.onboardedAt && (
-    <div className="text-xs text-red-600">
-      Auto-delete in {getRemainingDays(c.onboardedAt)} day(s)
-    </div>
-  )}
-</td>
+                    <td className="border px-2 py-1">
+                      <div>{c.status}</div>
+                      {c.status === "onboarded" && c.onboardedAt && (
+                        <div className="text-xs text-red-600">
+                          Auto-delete in {getRemainingDays(c.onboardedAt)}{" "}
+                          day(s)
+                        </div>
+                      )}
+                    </td>
                     <td className="border px-2 py-1">
                       <select
                         value={c.status}
-                        onChange={(e) => handleStatusUpdate(c._id, e.target.value)}
+                        onChange={(e) =>
+                          handleStatusUpdate(c._id, e.target.value)
+                        }
                         className="bg-gray-200 p-1 rounded"
                       >
                         <option value="pending">Pending</option>
@@ -317,8 +356,9 @@ const AddCandidate = () => {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-black text-white" : "bg-white"
-                }`}
+              className={`px-3 py-1 border rounded ${
+                currentPage === i + 1 ? "bg-black text-white" : "bg-white"
+              }`}
             >
               {i + 1}
             </button>
