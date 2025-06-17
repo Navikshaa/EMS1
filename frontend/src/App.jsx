@@ -87,6 +87,7 @@ import Onboarding1 from "./components/task/TaskStatus/hrTaks/Onboarding";
 import EmList from "./components/task/TaskStatus/hrTaks/EmList";
 import AttendanceUserList from "./components/task/TaskStatus/hrTaks/hrAttendaceView";
 import EmpAttendancePage from "./components/task/TaskStatus/hrTaks/EmpAttendancePage";
+import EditEmployee from "./components/task/TaskStatus/hrTaks/EditEmployee";
 
 function App() {
   return (
@@ -217,6 +218,8 @@ function App() {
           />
           <Route path="leaves" element={<Leavetable />} />
           <Route path="leaves/:id" element={<DetailLeave />} />
+
+          <Route path="employees/edit/:id" element={<EditEmployee />} />
 
           <Route path="groups" element={<ChatLayout />}>
             <Route index element={<HomePlaceholder />} />
