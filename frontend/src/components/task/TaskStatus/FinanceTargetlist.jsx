@@ -25,7 +25,6 @@ const CustomGauge = ({ value, label }) => {
         <circle
           cx="50"
           cy="50"
-          r="4"
           fill="#9ca3af"
           transform={`rotate(${rotation}, 50, 50) translate(0, -40)`}
         />
@@ -38,10 +37,12 @@ const CustomGauge = ({ value, label }) => {
 };
 
 const FinanceTargetList = () => {
-  const [creditedCount, setCreditedCount] = useState(0);
-  const [defaultCount, setDefaultCount] = useState(0);
+  const [doneVolume, setDoneVolume] = useState(0);
+  const [defaultVolume, setDefaultVolume] = useState(0);
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [totalTasks, setTotalTasks] = useState(0);
+  const [creditedCount, setCreditedCount] = useState(0);
+  const [defaultCount, setDefaultCount] = useState(0);
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -51,22 +52,41 @@ const FinanceTargetList = () => {
 
         const credited = allTasks.filter((task) => task.status === "done");
         const defaults = allTasks.filter((task) => task.status === "default");
-        const remaining = allTasks.reduce(
+
+        const creditedVolume = credited.reduce(
+          (sum, task) => sum + (parseFloat(task.ticket_size) || 0),
+          0
+        );
+        const defaultVolume = defaults.reduce(
+          (sum, task) => sum + (parseFloat(task.ticket_size) || 0),
+          0
+        );
+
+        const totalPending = allTasks.reduce(
           (sum, task) => sum + (parseFloat(task.pending_amount) || 0),
           0
         );
 
-        setCreditedCount(credited.length);
-        setDefaultCount(defaults.length);
+        const pendingToSubtract = [...credited, ...defaults].reduce(
+          (sum, task) => sum + (parseFloat(task.pending_amount) || 0),
+          0
+        );
+
+        const remaining = totalPending - pendingToSubtract;
+
+        setDoneVolume(creditedVolume);
+        setDefaultVolume(defaultVolume);
         setRemainingAmount(remaining);
         setTotalTasks(allTasks.length);
+        setCreditedCount(credited.length);
+        setDefaultCount(defaults.length);
       } catch (err) {
         console.error("Failed to fetch sales tasks:", err);
       }
     };
 
     fetchSalesData();
-    const interval = setInterval(fetchSalesData, 2 * 60 * 1000);
+    const interval = setInterval(fetchSalesData, 2 * 60 * 1000); // Refresh every 2 minutes
     return () => clearInterval(interval);
   }, []);
 
@@ -78,6 +98,12 @@ const FinanceTargetList = () => {
       className="p-4 rounded-lg shadow-md flex flex-col space-y-6 bg-cover bg-center"
       style={{ backgroundImage: `url(${bgImage})` }}
     >
+      <button
+        onClick={() => window.history.back()}
+        className="absolute top-6 left-45 bg-white/80 hover:bg-white px-3 py-1 rounded-full shadow text-2xl"
+      >
+        ←
+      </button>
       <div className="flex flex-col lg:flex-row justify-between items-start gap-6 w-full min-w-0">
         {/* Gauge 1: Credited Sale */}
         <div className="w-full lg:w-1/3 flex justify-center items-center pt-6">
@@ -120,10 +146,14 @@ const FinanceTargetList = () => {
             {/* Value Column */}
             <div className="flex flex-col gap-4 items-end">
               <div className="p-2">
-                <p className="text-lg font-bold text-black">{creditedCount}</p>
+                <p className="text-lg font-bold text-black">
+                  ₹{doneVolume.toFixed(2)}
+                </p>
               </div>
               <div className="p-4">
-                <p className="text-lg font-bold text-black">{defaultCount}</p>
+                <p className="text-lg font-bold text-black">
+                  ₹{defaultVolume.toFixed(2)}
+                </p>
               </div>
               <div className="p-4">
                 <p className="text-lg font-bold text-black">

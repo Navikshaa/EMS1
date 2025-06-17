@@ -7,12 +7,16 @@ const addLeave = async (req, res) => {
     const { userId, leaveType, startDate, endDate, reason } = req.body;
 
     if (!userId || !leaveType || !startDate || !endDate || !reason) {
-      return res.status(400).json({ success: false, message: "All fields required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields required" });
     }
 
     const employee = await Employee.findOne({ userId });
     if (!employee) {
-      return res.status(404).json({ success: false, message: "Employee not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Employee not found" });
     }
 
     const newLeave = new Leave({
@@ -32,7 +36,9 @@ const addLeave = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in addLeave:", error); // Full error trace
-    return res.status(500).json({ success: false, error: "Leave add server error" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Leave add server error" });
   }
 };
 
@@ -43,17 +49,20 @@ const getLeave = async (req, res) => {
     // Find employee by userId
     const employee = await Employee.findOne({ userId: id });
     if (!employee) {
-      return res.status(404).json({ success: false, message: "Employee not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Employee not found" });
     }
 
     const leaves = await Leave.find({ employeeId: employee._id });
     return res.status(200).json({ success: true, leaves: leaves || [] });
   } catch (error) {
     console.error("getLeave error:", error);
-    return res.status(500).json({ success: false, error: "Leave get server Error" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Leave get server Error" });
   }
 };
-
 
 const getLeaves = async (req, res) => {
   try {
@@ -107,21 +116,33 @@ const getLeaveDetail = async (req, res) => {
 const updateLeave = async (req, res) => {
   try {
     const { id } = req.params;
+    const { status, startDate, endDate } = req.body;
+
     const leave = await Leave.findByIdAndUpdate(
-      { _id: id },
-      { status: req.body.status }
+      id,
+      {
+        status,
+        startDate,
+        endDate,
+      },
+      { new: true }
     );
+
     if (!leave) {
       return res.status(404).json({ success: false, error: "Leave not found" });
     }
-    return res
-      .status(200)
-      .json({ success: true, message: "Leave updated successfully" });
+
+    return res.status(200).json({
+      success: true,
+      message: "Leave updated successfully",
+      leave,
+    });
   } catch (error) {
-    console.error(error.message); // log full error, not just .message
-    return res
-      .status(500)
-      .json({ success: false, error: "Leave update server Error " });
+    console.error("Update Leave Error:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Leave update server error",
+    });
   }
 };
 
@@ -143,6 +164,8 @@ const getLeavesByUserId = async (req, res) => {
       _id: leave._id,
       status: leave.status,
       leaveType: leave.leaveType,
+      startDate: leave.startDate,
+      endDate: leave.endDate,
     }));
 
     return res.status(200).json({ success: true, leaves: filteredLeaves });

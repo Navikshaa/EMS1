@@ -64,7 +64,7 @@ import LeaveAdd from "./components/leave/add";
 import Leavetable from "./components/leave/Table";
 import LeaveList1 from "./components/Hrleave/list";
 import LeaveAdd1 from "./components/Hrleave/add";
-import LeaveDetail from "./components/leave/DetailLeave";
+import DetailLeave from "./components/leave/DetailLeave";
 
 // Attendance
 import View4 from "./components/attendance/View";
@@ -84,6 +84,9 @@ import EmTasklist from "./components/task/EmTaskList";
 import VerifyCertificate from "./pages/verify/Verify";
 import HrTask from "./components/task/TaskStatus/HrTasklist";
 import Onboarding1 from "./components/task/TaskStatus/hrTaks/Onboarding";
+import EmList from "./components/task/TaskStatus/hrTaks/EmList";
+import AttendanceUserList from "./components/task/TaskStatus/hrTaks/hrAttendaceView";
+import EmpAttendancePage from "./components/task/TaskStatus/hrTaks/EmpAttendancePage";
 
 function App() {
   return (
@@ -125,7 +128,7 @@ function App() {
           <Route path="settings" element={<Setting />} />
           <Route path="adminResetPassword" element={<AdminResetPassword />} />
           <Route path="leaves" element={<Leavetable />} />
-          <Route path="leaves/:id" element={<LeaveDetail />} />
+          <Route path="leaves/:id" element={<DetailLeave />} />
           <Route path="employees/leaves/:id" element={<LeaveList />} />
 
           <Route path="attendance" element={<AdminView />} />
@@ -205,15 +208,15 @@ function App() {
           <Route path="tasks/hr/task" element={<HrTask />} />
           <Route path="tasks/hr/task/Onboarding" element={<Onboarding1 />} />
 
-           <Route path="task/employees" element={<List />}/>
-           <Route path="task/hr/add" element={<Add />} />
-            <Route path="attendance" element={<AdminView />} />
+          <Route path="task/employees" element={<EmList />} />
+          <Route path="hr/attendance" element={<AttendanceUserList />} />
+          <Route path="hr/attendance/:userId" element={<EmpAttendancePage />} />
           <Route
             path="attendance/view/:userId"
             element={<AttendanceEditView />}
           />
           <Route path="leaves" element={<Leavetable />} />
-          <Route path="leaves/:id" element={<LeaveDetail />} />
+          <Route path="leaves/:id" element={<DetailLeave />} />
 
           <Route path="groups" element={<ChatLayout />}>
             <Route index element={<HomePlaceholder />} />

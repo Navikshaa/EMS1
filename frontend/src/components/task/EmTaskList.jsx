@@ -19,7 +19,7 @@ const EmTasklist = () => {
   const { user } = useAuth();
 
   const [department, setDepartment] = useState(null);
-    const [selectedSubDep, setSelectedSubDep] = useState("");
+  const [selectedSubDep, setSelectedSubDep] = useState("");
   const [subDepartments, setSubDepartments] = useState([]);
   const [userDesignation, setUserDesignation] = useState("");
   const [loading, setLoading] = useState(true);
@@ -121,8 +121,13 @@ const EmTasklist = () => {
           : "px-4 py-8"
       }`}
     >
+      <button
+        onClick={() => window.history.back()}
+        className="absolute top-1 left-53 bg-white/80 hover:bg-white px-3 py-1 rounded-full shadow text-1xl"
+      >
+        ←
+      </button>
       <div className="w-[1000px] mx-auto">
-
         {loading && (
           <p className="text-center">Loading department details...</p>
         )}
@@ -137,7 +142,6 @@ const EmTasklist = () => {
               department.dep_name !== "Finance" && (
                 <>
                   <div className="flex justify-center mb-6">
-
                     <div className="w-full mb-8">
                       <h2 className="w-full bg-red-300 rounded-xl shadow-xl p-5 text-center text-2xl font-bold text-gray-800">
                         {department.dep_name}
@@ -152,13 +156,15 @@ const EmTasklist = () => {
                       subDepartments.map((sub) => {
                         const isActive = userDesignation === sub.name;
 
-                                  const isSelected = selectedSubDep === sub.name;
+                        const isSelected = selectedSubDep === sub.name;
 
                         return (
                           <div
                             key={sub._id}
-                             onClick={() => isActive && setSelectedSubDep(sub.name)}
-              className={`w-36 px-4 py-3 text-center rounded-lg text-sm font-bold shadow-lg transition
+                            onClick={() =>
+                              isActive && setSelectedSubDep(sub.name)
+                            }
+                            className={`w-36 px-4 py-3 text-center rounded-lg text-sm font-bold shadow-lg transition
                 ${
                   isActive
                     ? "bg-blue-500 text-white cursor-pointer hover:bg-blue-600"
@@ -166,8 +172,8 @@ const EmTasklist = () => {
                 }
                 ${isSelected ? "ring-2 ring-offset-2 ring-blue-300" : ""}
               `}
-            >
-              {sub.name}
+                          >
+                            {sub.name}
                           </div>
                         );
                       })

@@ -19,7 +19,9 @@ const Dashboard = () => {
         <div className="flex justify-between mb-16">
           <button
             className="w-64 h-20 rounded-3xl bg-white hover:bg-blue-200 shadow-xl font-bold text-gray-700 text-lg"
-            onClick={() => navigate("/employee-dashboard/tasks/hr/task/Onboarding")}
+            onClick={() =>
+              navigate("/employee-dashboard/tasks/hr/task/Onboarding")
+            }
           >
             ON <br /> BOARDING
           </button>
@@ -34,7 +36,7 @@ const Dashboard = () => {
         <div className="flex justify-between px-16">
           <button
             className="w-64 h-20 rounded-3xl bg-white shadow-xl hover:bg-blue-200 font-bold text-gray-700 text-lg"
-            onClick={() => navigate("/employee-dashboard/attendance")}
+            onClick={() => navigate("/employee-dashboard/hr/attendance")}
           >
             ATTENDANCE
           </button>

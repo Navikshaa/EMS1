@@ -13,10 +13,11 @@ const FinanceTable = () => {
   const [salesData, setSalesData] = useState([]);
   const [editItem, setEditItem] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [pendingDate, setPendingDate] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [clicked, setClicked] = useState({});
-  const [searchName, setSearchName] = useState("");
+  const [searchContact, setSearchContact] = useState("");
   const [searchDate, setSearchDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -108,56 +109,45 @@ const FinanceTable = () => {
   const handleMarkAsDone = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/salestask/${id}`,
+        `http://localhost:3000/api/salestask/done/${id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: "done" }),
         }
       );
-
-      if (!response.ok) throw new Error("Failed to update status");
-
       const updatedItem = await response.json();
-      const updatedData = salesData.map((item) =>
-        item._id === id ? { ...item, status: updatedItem.status } : item
+
+      // Update the item in local state
+      setSalesData((prevData) =>
+        prevData.map((item) =>
+          item._id === updatedItem._id ? updatedItem : item
+        )
       );
-      setSalesData(updatedData);
+
       setClicked((prev) => ({ ...prev, [id]: { done: true } }));
-      alert("Status updated to done");
     } catch (error) {
-      console.error("Status update error:", error);
-      alert("Failed to mark as done");
+      console.error("Error marking as done:", error);
     }
   };
 
   const handleMarkAsDefault = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/salestask/${id}`,
+        `http://localhost:3000/api/salestask/default/${id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: "default" }),
         }
       );
-
-      if (!response.ok) throw new Error("Failed to update status");
-
       const updatedItem = await response.json();
 
-      const updatedData = salesData.map((item) =>
-        item._id === id ? { ...item, status: updatedItem.status } : item
+      setSalesData((prevData) =>
+        prevData.map((item) =>
+          item._id === updatedItem._id ? updatedItem : item
+        )
       );
 
-      setSalesData(updatedData);
-
-      setClicked((prev) => ({ ...prev, [id]: { ...prev[id], default: true } }));
-
-      alert("Status updated to default");
+      setClicked((prev) => ({ ...prev, [id]: { default: true } }));
     } catch (error) {
-      console.error("Status update error:", error);
-      alert("Failed to mark as default");
+      console.error("Error marking as default:", error);
     }
   };
 
@@ -193,13 +183,15 @@ const FinanceTable = () => {
   };
 
   const filteredData = salesData.filter((item) => {
-    const matchName = (item.customer_name || "")
+    const matchContact = (item.contact_no || "")
       .toLowerCase()
-      .includes(searchName.toLowerCase());
+      .includes(searchContact.toLowerCase());
+
     const matchDate = searchDate
       ? new Date(item.createdAt).toLocaleDateString("en-CA") === searchDate
       : true;
-    return matchName && matchDate;
+
+    return matchContact && matchDate;
   });
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -234,16 +226,15 @@ const FinanceTable = () => {
     <div className="p-4 bg-white min-h-screen flex flex-col items-center">
       <ToastContainer />
       <audio ref={audioRef} src="/alert.mp3" preload="auto" />
-
       <div className="w-full max-w-[1200px] bg-white rounded-lg">
         {/* Filters */}
         <div className="border-b px-4 py-3 flex flex-col sm:flex-row gap-3">
           <input
             type="text"
-            placeholder="Search by Customer Name"
-            value={searchName}
+            placeholder="Search by Phone No"
+            value={searchContact}
             onChange={(e) => {
-              setSearchName(e.target.value);
+              setSearchContact(e.target.value);
               setCurrentPage(1);
             }}
             className="rounded-md p-2 w-48 border"
@@ -288,7 +279,6 @@ const FinanceTable = () => {
             </thead>
             <tbody>
               {currentItems.map((item, idx) => {
-                const isEditing = editItem?._id === item._id;
                 const today = new Date().toLocaleDateString("en-IN");
                 const isToday =
                   item.pending_date &&
@@ -336,40 +326,16 @@ const FinanceTable = () => {
 
                     <td className="sticky right-0 bg-gray-100 p-2 z-10">
                       <div className="flex gap-2 items-center justify-center">
-                        {isEditing ? (
-                          <button
-                            onClick={async () => {
-                              const response = await fetch(
-                                `http://localhost:3000/api/salestask/${editItem._id}`,
-                                {
-                                  method: "PUT",
-                                  headers: {
-                                    "Content-Type": "application/json",
-                                  },
-                                  body: JSON.stringify(editItem),
-                                }
-                              );
-                              const updatedItem = await response.json();
-                              const updatedData = salesData.map((d) =>
-                                d._id === updatedItem._id ? updatedItem : d
-                              );
-                              setSalesData(updatedData);
-                              setEditItem(null);
-                            }}
-                            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700"
-                            title="Save"
-                          >
-                            <FaSave size={16} />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => setEditItem(item)}
-                            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-500 text-white hover:bg-blue-600"
-                            title="Edit Row"
-                          >
-                            <FaEdit size={16} />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => {
+                            setEditItem(item);
+                            setEditModalOpen(true);
+                          }}
+                          className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-500 text-white hover:bg-blue-600"
+                          title="Edit Row"
+                        >
+                          <FaEdit size={16} />
+                        </button>
 
                         <button
                           onClick={() => handleEditDate(item)}
@@ -397,6 +363,7 @@ const FinanceTable = () => {
                         >
                           <FaCheckCircle size={18} />
                         </button>
+
                         <button
                           onClick={() => handleMarkAsDefault(item._id)}
                           className={`w-8 h-8 flex items-center justify-center rounded-full text-white ${
@@ -475,6 +442,85 @@ const FinanceTable = () => {
               </button>
               <button
                 onClick={handleDateSubmit}
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Row Modal */}
+      {editModalOpen && editItem && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-6 w-[500px] max-h-[80vh] overflow-y-auto shadow-lg space-y-4">
+            <h3 className="text-lg font-semibold">Edit Details</h3>
+            {columns.slice(1, -1).map(({ key, label }) => (
+              <div key={key}>
+                <label className="block text-sm font-medium mb-1">
+                  {label}
+                </label>
+                {[
+                  "internship_start_date",
+                  "internship_end_date",
+                  "pending_date",
+                ].includes(key) ? (
+                  <input
+                    type="date"
+                    value={
+                      editItem[key]
+                        ? new Date(editItem[key]).toISOString().split("T")[0]
+                        : ""
+                    }
+                    onChange={(e) =>
+                      setEditItem({ ...editItem, [key]: e.target.value })
+                    }
+                    className="w-full border px-2 py-1 rounded"
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    value={editItem[key] || ""}
+                    onChange={(e) =>
+                      setEditItem({ ...editItem, [key]: e.target.value })
+                    }
+                    className="w-full border px-2 py-1 rounded"
+                  />
+                )}
+              </div>
+            ))}
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setEditModalOpen(false);
+                  setEditItem(null);
+                }}
+                className="bg-gray-400 text-white px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  const response = await fetch(
+                    `http://localhost:3000/api/salestask/${editItem._id}`,
+                    {
+                      method: "PUT",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify(editItem),
+                    }
+                  );
+                  const updatedItem = await response.json();
+                  const updatedData = salesData.map((d) =>
+                    d._id === updatedItem._id ? updatedItem : d
+                  );
+                  setSalesData(updatedData);
+                  setEditModalOpen(false);
+                  setEditItem(null);
+                }}
                 className="bg-blue-600 text-white px-4 py-2 rounded"
               >
                 Save

@@ -103,26 +103,45 @@ const OpTable = () => {
     }
   };
 
-  const markClicked = (id, key) => {
-    const updated = {
-      ...clicked,
+  const markClicked = (id, key, value) => {
+    setClicked((prev) => ({
+      ...prev,
       [id]: {
-        ...(clicked[id] || {}),
+        ...prev[id],
         [key]: true,
+        certificateId: value,
       },
-    };
-    setClicked(updated);
-    localStorage.setItem("clickedButtons", JSON.stringify(updated));
+    }));
   };
 
-  const handleDownloadCertificate = async (id, name) => {
+  const [certificatePopup, setCertificatePopup] = useState({
+    visible: false,
+    certificateId: "",
+  });
+
+  const showCertificatePopup = (certId) => {
+    setCertificatePopup({
+      visible: true,
+      certificateId: certId,
+    });
+  };
+
+  const handleDownloadCertificate = async (id, name, certificateId) => {
+    if (certificateId) {
+      showCertificatePopup(certificateId);
+      return;
+    }
+
     try {
       const response = await fetch(
         `http://localhost:3000/api/certificate/generate/${id}`
       );
+
       if (!response.ok) throw new Error("Failed to generate certificate");
 
       const blob = await response.blob();
+      const certId = response.headers.get("x-certificate-id") || "Unknown";
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -131,20 +150,36 @@ const OpTable = () => {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
-      markClicked(id, "certificate");
+
+      markClicked(id, "certificate", certId);
+      showCertificatePopup(certId); // ✅ show modal
     } catch (error) {
       console.error("Download error:", error);
       alert("Error downloading certificate");
     }
   };
 
-  const handleDownloadInternshipCertificate = async (id, name) => {
+  const handleDownloadInternshipCertificate = async (
+    id,
+    name,
+    certificateId
+  ) => {
+    if (certificateId) {
+      // Already generated – show popup with ID
+      showCertificatePopup(certificateId);
+      return;
+    }
+
     try {
       const response = await fetch(
         `http://localhost:3000/api/internships/generate/${id}`
       );
+
       if (!response.ok)
         throw new Error("Failed to generate internship certificate");
+
+      // 🧠 Extract certificate ID from response headers (same as training logic)
+      const certId = response.headers.get("x-certificate-id") || "Unknown";
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -155,7 +190,9 @@ const OpTable = () => {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
-      markClicked(id, "internship");
+
+      markClicked(id, "internship", certId); // ✅ Save to state
+      showCertificatePopup(certId); // ✅ Show modal popup
     } catch (error) {
       console.error("Download error:", error);
       alert("Error downloading internship certificate");
@@ -374,16 +411,23 @@ const OpTable = () => {
                           onClick={() =>
                             handleDownloadCertificate(
                               item._id,
-                              item.customer_name
+                              item.customer_name,
+                              item.training_certificate_id
                             )
                           }
                           className={`w-10 h-10 flex items-center justify-center rounded-full ${
                             clicked[item._id]?.certificate
-                              ? "bg-yellow-300 cursor-not-allowed"
+                              ? "bg-yellow-300"
                               : "bg-gray-600 hover:bg-gray-800 text-white"
                           }`}
-                          title="Download Certificate"
-                          disabled={clicked[item._id]?.certificate}
+                          title={
+                            clicked[item._id]?.certificate
+                              ? `Certificate ID: ${
+                                  clicked[item._id]?.certificateId ||
+                                  "Already Generated"
+                                }`
+                              : "Download Certificate"
+                          }
                         >
                           <PiCertificateBold size={18} />
                         </button>
@@ -392,16 +436,23 @@ const OpTable = () => {
                           onClick={() =>
                             handleDownloadInternshipCertificate(
                               item._id,
-                              item.customer_name
+                              item.customer_name,
+                              item.internship_certificate_id
                             )
                           }
                           className={`w-10 h-10 flex items-center justify-center rounded-full ${
                             clicked[item._id]?.internship
-                              ? "bg-yellow-300 cursor-not-allowed"
+                              ? "bg-yellow-300"
                               : "bg-gray-600 hover:bg-gray-800 text-white"
                           }`}
-                          title="Download Internship Certificate"
-                          disabled={clicked[item._id]?.internship}
+                          title={
+                            clicked[item._id]?.internship
+                              ? `Internship Certificate ID: ${
+                                  clicked[item._id]?.certificateId ||
+                                  "Already Generated"
+                                }`
+                              : "Download Internship Certificate"
+                          }
                         >
                           <LiaCertificateSolid size={18} />
                         </button>
@@ -476,6 +527,38 @@ const OpTable = () => {
           </button>
         </div>
       </div>
+
+      {certificatePopup.visible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-80 text-center relative">
+            <h2 className="text-lg font-semibold mb-3">
+              🎓 Certificate Generated
+            </h2>
+            <p className="mb-2 text-gray-700">
+              Certificate ID:
+              <span className="font-mono block text-blue-700 mt-1">
+                {certificatePopup.certificateId}
+              </span>
+            </p>
+            <button
+              className="mt-3 bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+              onClick={() => {
+                navigator.clipboard.writeText(certificatePopup.certificateId);
+              }}
+            >
+              📋 Copy to Clipboard
+            </button>
+            <button
+              onClick={() =>
+                setCertificatePopup({ visible: false, certificateId: "" })
+              }
+              className="absolute top-2 right-3 text-gray-500 hover:text-black"
+            >
+              ✖
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

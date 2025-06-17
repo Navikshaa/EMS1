@@ -1,9 +1,8 @@
-// Table.jsx
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { getLeaveColumns, LeaveButtons } from "../../utils/LeaveHelper";
 import axios from "axios";
-import HeaderImg from "../../assets/images/Salary.jpg"; // Update path as needed
+import HeaderImg from "../../assets/images/leave.png";
 
 const Table = () => {
   const [leaves, setLeaves] = useState(null);
@@ -74,10 +73,14 @@ const Table = () => {
   };
 
   const filterByButton = (status) => {
-    const data = leaves.filter((leave) =>
-      leave.status.toLowerCase().includes(status.toLowerCase())
-    );
-    setFilteredLeaves(data);
+    if (status === "") {
+      setFilteredLeaves(leaves);
+    } else {
+      const data = leaves.filter((leave) =>
+        leave.status.toLowerCase().includes(status.toLowerCase())
+      );
+      setFilteredLeaves(data);
+    }
   };
 
   const filterByDepartment = (dept) => {
@@ -95,76 +98,75 @@ const Table = () => {
   return (
     <>
       {filteredLeaves ? (
-        <div className="">
+        <div>
           {/* 🔷 Header Image */}
-          <div className="w-full h-60 mb-6 rounded-3xl overflow-hidden shadow-md">
+          <div className="w-[1000px] mb-6 rounded-3xl overflow-hidden shadow-md">
             <img
               src={HeaderImg}
               alt="Header"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain "
             />
           </div>
+          <button
+            onClick={() => window.history.back()}
+            className="absolute top-6 left-53 bg-white/80 hover:bg-white px-3 py-1 rounded-full shadow text-2xl"
+          >
+            ←
+          </button>
 
-          <div className="text-center p-3">
           {/* 🔍 Filters */}
-          <div className="flex  flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-            <input
-              type="text"
-              placeholder="Search by name..."
-              className="border border-gray-300 rounded px-4 py-2 shadow-lg w-full sm:w-72"
-              onChange={filterByInput}
-            />
+          <div className="text-center p-3">
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-4 mb-6">
+              {/* 🔍 Search */}
+              <input
+                type="text"
+                placeholder="Search by name..."
+                className="border border-gray-300 rounded px-4 py-2 shadow-lg w-full lg:w-72"
+                onChange={filterByInput}
+              />
 
-            {/* 🔘 Department Filter */}
-            <select
-              value={selectedDept}
-              onChange={(e) => filterByDepartment(e.target.value)}
-              className="border border-gray-300 rounded px-4 py-2 shadow-lg w-full sm:w-72"
-            >
-              <option value="">All Departments</option>
-              {departments.map((dept) => (
-                <option key={dept._id} value={dept.dep_name}>
-                  {dept.dep_name}
-                </option>
-              ))}
-            </select>
+              {/* 🏢 Department Filter */}
+              <select
+                value={selectedDept}
+                onChange={(e) => filterByDepartment(e.target.value)}
+                className="border border-gray-300 rounded px-4 py-2 shadow-lg w-full lg:w-72"
+              >
+                <option value="">All Departments</option>
+                {departments.map((dept) => (
+                  <option key={dept._id} value={dept.dep_name}>
+                    {dept.dep_name}
+                  </option>
+                ))}
+              </select>
 
-            {/* 🔘 Status Filters */}
-            <div className="space-x-2">
-              <button
-                className="bg-blue-500 shadow-lg text-white px-3 py-2 rounded"
-                onClick={() => filterByButton("Pending")}
-              >
-                Pending
-              </button>
-              <button
-                className="bg-green-500 shadow-lg text-white px-3 py-2 rounded"
-                onClick={() => filterByButton("Approved")}
-              >
-                Approved
-              </button>
-              <button
-                className="bg-red-500 shadow-lg text-white px-3 py-2 rounded"
-                onClick={() => filterByButton("Rejected")}
-              >
-                Rejected
-              </button>
+              {/* 📂 Status Filter Dropdown */}
+              <div className="w-full lg:w-64">
+                <select
+                  id="statusFilter"
+                  onChange={(e) => filterByButton(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded shadow-lg bg-white text-gray-700"
+                >
+                  <option value="">-- Select Status --</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
             </div>
+
+            {/* 📋 Leave Table */}
+            <DataTable
+              columns={getLeaveColumns()}
+              data={filteredLeaves}
+              pagination
+              striped
+              highlightOnHover
+              responsive
+              noDataComponent={
+                <div className="py-4 text-gray-500">No leaves found.</div>
+              }
+            />
           </div>
-          
-          {/* 📋 Leave Table */}
-          <DataTable
-            columns={getLeaveColumns()}
-            data={filteredLeaves}
-            pagination
-            striped
-            highlightOnHover
-            responsive
-            noDataComponent={
-              <div className="py-4 text-gray-500">No leaves found.</div>
-            }
-          />
-        </div>
         </div>
       ) : (
         <div className="p-6 text-center text-gray-500">Loading...</div>

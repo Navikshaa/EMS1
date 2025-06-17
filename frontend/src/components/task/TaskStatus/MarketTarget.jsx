@@ -174,7 +174,7 @@ const MarketTargetList = ({ employeeName }) => {
     }, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [employeeName]); 
+  }, [employeeName]);
 
   if (loadingTargets) return <div className="p-4">Loading targets...</div>;
 
@@ -200,8 +200,15 @@ const MarketTargetList = ({ employeeName }) => {
       className="p-4 rounded-lg shadow-md flex flex-col space-y-6 bg-cover bg-center"
       style={{ backgroundImage: `url(${bgImage})` }}
     >
+      <button
+        onClick={() => window.history.back()}
+        className="absolute top-6 left-53 bg-white/80 hover:bg-white px-3 py-1 rounded-full shadow text-2xl"
+      >
+        ←
+      </button>
       <div className="flex flex-col md:flex-row justify-between items-start gap-6 w-full min-w-0">
         {/* Bar Chart */}
+
         <div className="w-full md:w-1/3" style={{ height: 220, minWidth: 0 }}>
           <div className="flex flex-wrap justify-start gap-2 mb-2">
             {Object.entries(dayColors).map(([day, color]) => (
