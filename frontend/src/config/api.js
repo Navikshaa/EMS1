@@ -7,6 +7,13 @@ export const API_ENDPOINTS =  {
     VERIFY: `${API_BASE_URL}/api/auth/verify`,
     LOGIN: `${API_BASE_URL}/api/auth/login`,
     LOGOUT: `${API_BASE_URL}/api/auth/logout`,
+    PASSWORD: `${API_BASE_URL}/api/auth`,
+  },
+
+  //ADMIN endpoints
+  ADMIN: {
+    BASE: `${API_BASE_URL}/api/admin`,
+    GET_ALL: `${API_BASE_URL}/api/admin`,
   },
   // Employee endpoints
   EMPLOYEE: {
