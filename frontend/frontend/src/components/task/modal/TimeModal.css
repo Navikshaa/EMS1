@@ -1,0 +1,12 @@
+.highlight-task-fixed {
+  background-color: #facc15 !important;
+  color: black !important;
+  border-radius: 50%;
+}
+
+/* Highlight full selected range */
+.highlight-range {
+  background-color: #bae6fd !important; /* sky-200 */
+  color: #000;
+  border-radius: 50%;
+}

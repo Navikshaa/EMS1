@@ -1,0 +1,67 @@
+/* Wrapper to center entire calendar vertically and horizontally */
+.attendance-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  justify-content: center;
+}
+
+/* Center calendar container */
+.calendar-container {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+/* Default tile styling */
+.react-calendar__tile {
+  border-radius: 50% !important;
+  position: relative;
+  text-align: center;
+  color: black;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+/* Attendance status colors */
+.react-calendar__tile.on-time {
+  background-color: #c6f6d5 !important; /* green */
+}
+
+.react-calendar__tile.late {
+  background-color: #fbd38d !important; /* orange */
+}
+
+.react-calendar__tile.half-day {
+  background-color: #fbb6ce !important; /* pink */
+}
+
+.react-calendar__tile.absent {
+  background-color: #feb2b2 !important; /* red */
+}
+
+.react-calendar__tile.holiday {
+  background-color: #e2e8f0 !important; /* gray */
+}
+
+.react-calendar__tile.sunday {
+  background-color: #bee3f8 !important; /* light blue */
+}
+
+/* No Login - white background with border */
+.react-calendar__tile.no-login {
+  background-color: white !important;
+  border: 2px solid #cbd5e0 !important;
+}
+
+.react-calendar__tile.absent {
+  background-color: #ee1a1a !important; /* light red */
+  color: white !important;
+}
+
+/* Hover state for all tiles */
+.react-calendar__tile:hover {
+  background-color: #63b3ed !important; /* blue */
+  color: white !important;
+}
