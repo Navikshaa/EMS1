@@ -1,0 +1,29 @@
+/* Remove borders and unify spacing */
+.custom-calendar {
+  width: 100% !important;
+}
+
+/* Customize tile font color */
+.react-calendar__tile {
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+/* Today (highlight with border or bold) */
+.react-calendar__tile--now {
+  font-weight: bold;
+  border: 1px solid #000;
+  border-radius: 8px;
+}
+
+/* On hover */
+.react-calendar__tile:enabled:hover {
+  background-color: #e5f0ff;
+  color: #000;
+  border-radius: 8px;
+}
+
+/* Disabled dates */
+.react-calendar__tile:disabled {
+  color: #ccc;
+}
