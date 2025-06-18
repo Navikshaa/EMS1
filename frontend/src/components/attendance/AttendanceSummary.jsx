@@ -11,6 +11,7 @@ import axios from "axios";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Doughnut } from "react-chartjs-2";
+import API_ENDPOINTS from "../../config/api";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
@@ -48,7 +49,7 @@ const AttendanceSummary = ({ userId }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:3000/api/login-history/${userId}`,
+        `${API_ENDPOINTS.ADMIN_EDIT.BASE}/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

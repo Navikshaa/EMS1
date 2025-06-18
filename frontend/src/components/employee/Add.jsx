@@ -2,16 +2,20 @@ import React, { useState, useEffect } from "react";
 import { fetchDepartments } from "../../utils/EmployeeHelper";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../../config/api";
 
 const Add = () => {
   const [departments, setDepartments] = useState([]);
-  const [formData, setFormData] = useState({});
   const [imageFile, setImageFile] = useState(null);
   const [subDepartments, setSubDepartments] = useState([]);
   const STEPS = ["Basic", "Personal", "Employment", "Bank"];
   const [currentStep, setStep] = useState(0);
 
   const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    
+  });
 
   useEffect(() => {
     const getDepartments = async () => {
@@ -32,7 +36,7 @@ const Add = () => {
       if (name === "department") {
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/department/${value}`
+            `${API_ENDPOINTS.DEPARTMENT.BASE}/${value}`
           );
 
           const subDeps = response.data.department.sub_departments || [];
@@ -81,7 +85,7 @@ const Add = () => {
 
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/employee/add",
+      `${API_ENDPOINTS.EMPLOYEE.BASE}/add`,
       formDataObj,
       {
         headers: {

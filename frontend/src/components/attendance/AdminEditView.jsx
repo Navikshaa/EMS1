@@ -3,6 +3,8 @@ import Calendar from "react-calendar";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import "react-calendar/dist/Calendar.css";
+import API_ENDPOINTS from "../../config/api";
+
 
 // Legend component
 const Legend = ({ color, label }) => (
@@ -10,7 +12,7 @@ const Legend = ({ color, label }) => (
     <div className={`w-4 h-4 rounded ${color}`}></div>
     <span className="text-sm">{label}</span>
   </div>
-);
+);  
 
 // Format a date as YYYY-MM-DD
 const formatDate = (date) => date.toLocaleDateString("en-CA");
@@ -67,7 +69,7 @@ const AttendanceEditView = ({ userId }) => {
     setError(null);
 
     axios
-      .get(`http://localhost:3000/api/login-history/${userId}`)
+      .get(`${API_ENDPOINTS.ADMIN_EDIT.BASE}/${userId}`)
       .then((res) => {
         const rawData = res.data || [];
 
@@ -192,7 +194,7 @@ const AttendanceEditView = ({ userId }) => {
 
     if (selectedDateData._id) {
       axios
-        .put(`http://localhost:3000/api/login-history/edit/${userId}`, payload)
+        .put(`${API_ENDPOINTS.ADMIN_EDIT.BASE}/edit/${userId}`, payload)
         .then(() => {
           updateLocal({ ...selectedDateData });
           setEditMode(false);
@@ -201,7 +203,7 @@ const AttendanceEditView = ({ userId }) => {
         .catch(() => showMessage("Error updating login history.", "error"));
     } else {
       axios
-        .post("http://localhost:3000/api/login-history/", {
+        .post("${API_ENDPOINTS.ADMIN_EDIT.BASE}/", {
           ...payload,
           userId,
         })

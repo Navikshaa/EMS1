@@ -3,6 +3,7 @@ import axios from "axios";
 import { FaCog } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { FiUpload, FiUserPlus, FiUserX } from "react-icons/fi";
+import API_ENDPOINTS from "../../config/api";
 
 const SettingsPanel = () => {
   const [activeTab, setActiveTab] = useState("groups");
@@ -27,7 +28,7 @@ const [groupNotification, setGroupNotification] = useState(true);
 
   const fetchGroups = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/group", {
+      const res = await axios.get(API_ENDPOINTS.GROUP.BASE, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       if (res.data.success) {
@@ -40,7 +41,7 @@ const [groupNotification, setGroupNotification] = useState(true);
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/employee", {
+      const res = await axios.get(API_ENDPOINTS.EMPLOYEE.BASE, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setEmployees(res.data.employees || []);
@@ -71,10 +72,10 @@ const [groupNotification, setGroupNotification] = useState(true);
 
   const getImageUrl = (path) => {
     if (!path || typeof path !== "string") {
-      return "http://localhost:3000/uploads/default-user.png";
+      return `${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/default-user.png`;
     }
     const cleanedPath = path.replace(/^public[\\/]/, "").replace(/\\/g, "/");
-    return `http://localhost:3000/${cleanedPath}`;
+    return `${API_ENDPOINTS}/${cleanedPath}`;
   };
 
   const isGroupActive = (groupId) =>
@@ -87,7 +88,7 @@ const [groupNotification, setGroupNotification] = useState(true);
       if (groupDP) formData.append("group_dp", groupDP);
       members.forEach((id) => formData.append("members", id));
 
-      const res = await axios.post("http://localhost:3000/api/group/add", formData, {
+      const res = await axios.post(API_ENDPOINTS.GROUP.GET_ALL, formData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
@@ -234,8 +235,8 @@ const [groupNotification, setGroupNotification] = useState(true);
                             <img
                               src={
                                 emp.userId?.profileImage
-                                  ? `http://localhost:3000/uploads/${emp.userId.profileImage}`
-                                  : "http://localhost:3000/uploads/default-user.png"
+                                  ? `${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/${emp.userId.profileImage}`
+                                  : `${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/default-user.png`
                               }
                               alt={emp.userId?.name}
                               className="w-8 h-8 rounded-full object-cover border"

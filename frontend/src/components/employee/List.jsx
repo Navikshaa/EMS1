@@ -5,6 +5,7 @@ import { Filter } from "lucide-react";
 import DataTable from "react-data-table-component";
 import { columns } from "../../utils/EmployeeHelper";
 import headerImage from "../../assets/images/AddEmployeehr.png";
+import API_ENDPOINTS from "../../config/api";
 
 const List = () => {
   const [employees, setEmployees] = useState([]);
@@ -19,7 +20,7 @@ const List = () => {
     const fetchEmployees = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:3000/api/employee", {
+        const response = await axios.get(API_ENDPOINTS.EMPLOYEE.BASE, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

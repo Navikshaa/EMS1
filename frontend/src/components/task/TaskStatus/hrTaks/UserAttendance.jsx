@@ -5,6 +5,7 @@ import "react-calendar/dist/Calendar.css";
 import { FaFilter, FaRegClock } from "react-icons/fa";
 import "./AttendanceCalendar.css";
 import { useParams } from "react-router-dom";
+import API_ENDPOINTS from "../../../../config/api";
 
 const AttendanceCalendar = () => {
   const { userId } = useParams();
@@ -42,7 +43,7 @@ const AttendanceCalendar = () => {
   const fetchAttendance = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/api/login-history/${userId}`
+        `${API_ENDPOINTS.ADMIN_EDIT.BASE}/${userId}`
       );
       const formatted = res.data.data.map((entry) => {
         return {
@@ -111,7 +112,7 @@ const AttendanceCalendar = () => {
         .toISOString()
         .split("T")[0]; // ensures 'YYYY-MM-DD'
       await axios.put(
-        `http://localhost:3000/api/login-history/edit/${userId}`,
+        `${API_ENDPOINTS.ADMIN_EDIT.BASE}/edit/${userId}`,
         {
           loginTime: new Date(editModalData.loginTime),
           logoutTime: new Date(editModalData.logoutTime),

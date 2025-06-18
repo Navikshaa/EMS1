@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, Link, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
+import API_ENDPOINTS from "../../config/api";
 
 const EmployeeChatLayout = () => {
   const [groups, setGroups] = useState([]);
@@ -10,7 +11,7 @@ const EmployeeChatLayout = () => {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/group/my-groups", {
+        const res = await axios.get(API_ENDPOINTS.GROUP.BASE_GROUP, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -55,7 +56,7 @@ const EmployeeChatLayout = () => {
               <img
                 src={
                   group.group_dp
-                    ? `http://localhost:3000/${group.group_dp.replace("public/", "")}`
+                    ? `${API_ENDPOINTS}/${group.group_dp.replace("public/", "")}`
                     : "https://via.placeholder.com/50"
                 }
                 alt={group.group_name}

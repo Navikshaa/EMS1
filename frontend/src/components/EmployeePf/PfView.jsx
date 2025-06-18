@@ -16,7 +16,7 @@ const PfView = () => {
       if (!user) return;
 
       const pfRes = await axios.get(
-        `http://localhost:3000/api/pf/${user._id}`,
+        `${API_ENDPOINTS.PF.BASE}/${user._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -38,9 +38,8 @@ const PfView = () => {
       setButtonLoading(true);
       setMessage("");
 
-      const res = await axios.post(
-        `http://localhost:3000/api/pf`,
-        { userId: user._id },
+      const res = await axios.post(API_ENDPOINTS.PF.BASE,
+      { userId: user._id },
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -4,13 +4,14 @@ import { useAuth } from "../../context/authContext";
 import { FaSignOutAlt } from "react-icons/fa";
 
 import Logo from "../../assets/images/erplogo.png";
+import API_ENDPOINTS from "../../config/api";
 
 const AdminSidebar = () => {
   const { logout } = useAuth();
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3000/api/auth/logout", {
+      await fetch(API_ENDPOINTS.AUTH.LOGOUT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,18 +1,10 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext.jsx";
-import {
-  FaChartLine,
-  FaIdBadge,
-  FaBullhorn,
-  FaUmbrellaBeach,
-  FaHandHoldingUsd,
-  FaClock,
-  FaComments,
-  FaSignOutAlt,
-} from "react-icons/fa";
+import {FaSignOutAlt} from "react-icons/fa";
 
 import Logo from "../../assets/images/erplogo.png"; // 👈 Replace with actual logo path
+import API_ENDPOINTS from "../../config/api.js";
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
@@ -20,7 +12,7 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3000/api/auth/logout", {
+      await fetch(API_ENDPOINTS.AUTH.LOGOUT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

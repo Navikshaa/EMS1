@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { fetchDepartments, getEmployees } from "../../utils/EmployeeHelper";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../../config/api";
 
 const Add = () => {
   const [salary, setSalary] = useState({
@@ -111,8 +112,7 @@ const Add = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/salary/add",
+      const response = await axios.post(API_ENDPOINTS.SALARY.GET_ALL,
         salary,
         {
           headers: {

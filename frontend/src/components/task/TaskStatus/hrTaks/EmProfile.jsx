@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaUser } from "react-icons/fa";
+import API_ENDPOINTS from "../../../../config/api";
 
 const EmProfile = ({ userId }) => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const EmProfile = ({ userId }) => {
     const fetchEmployee = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/employee/${userId}`,
+          `${API_ENDPOINTS.EMPLOYEE.BASE}/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -33,7 +34,7 @@ const EmProfile = ({ userId }) => {
     const fetchAttendance = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/login-history/${userId}`,
+          `${API_ENDPOINTS.LOGIN_HISTORY.BASE}/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -125,7 +126,7 @@ const EmProfile = ({ userId }) => {
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-white flex items-center justify-center">
             {employee?.userId?.profileImage ? (
               <img
-                src={`http://localhost:3000/uploads/${employee.userId.profileImage}`}
+                src={`${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/${employee.userId.profileImage}`}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />

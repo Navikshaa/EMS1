@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaUser } from 'react-icons/fa';
+import API_ENDPOINTS from '../../config/api';
 
 const EmployeeProfile = () => {
   const { id } = useParams();
@@ -15,7 +16,7 @@ const EmployeeProfile = () => {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/employee/${id}`, {
+        const response = await axios.get(`${API_ENDPOINTS.EMPLOYEE.BASE}/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         if (response.data.success) {
@@ -28,7 +29,7 @@ const EmployeeProfile = () => {
 
     const fetchAttendance = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/login-history/${id}`, {
+        const response = await axios.get(`${API_ENDPOINTS.ADMIN_EDIT.BASE}/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
 

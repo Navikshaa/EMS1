@@ -7,6 +7,7 @@ import {
   FaThermometerHalf,
 } from "react-icons/fa";
 import axios from "axios";
+import API_ENDPOINTS from "../../config/api";
 
 const LeaveSummary = ({ userId }) => {
   const [leaveStats, setLeaveStats] = useState({
@@ -28,7 +29,7 @@ const LeaveSummary = ({ userId }) => {
     const fetchLeaves = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/leave/user/${userId}`
+          `${API_ENDPOINTS.LEAVE.BASE}/user/${userId}`
         );
         const leaves = res.data.leaves || [];
 

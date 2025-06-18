@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import API_ENDPOINTS from "../../config/api";
 
 const View = () => {
   const { id } = useParams();
@@ -10,7 +11,7 @@ const View = () => {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/employee/${id}`, {
+        const response = await axios.get(`${API_ENDPOINTS.EMPLOYEE.BASE}/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

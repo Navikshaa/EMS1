@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/authContext"; // ✅ using role from auth context
+import API_ENDPOINTS from "../../config/api";
 
 const SettingsPanel = () => {
   const [groups, setGroups] = useState([]);
@@ -15,7 +16,7 @@ const SettingsPanel = () => {
 
   const fetchGroups = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/group", {
+      const res = await axios.get(API_ENDPOINTS.GROUP.BASE, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -30,10 +31,10 @@ const SettingsPanel = () => {
 
   const getImageUrl = (path) => {
     if (!path || typeof path !== "string") {
-      return "http://localhost:3000/uploads/default-user.png";
+      return `${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/default-user.png`;
     }
     const cleanedPath = path.replace(/^public[\\/]/, "").replace(/\\/g, "/");
-    return `http://localhost:3000/${cleanedPath}`;
+    return `${API_ENDPOINTS}/${cleanedPath}`;
   };
 
   const isGroupActive = (groupId) =>

@@ -4,6 +4,7 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Hrtask from "../../../../assets/images/task_bg.jpeg";
+import API_ENDPOINTS from "../../../../config/api";
 
 const AddCandidate = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,7 +41,7 @@ const AddCandidate = () => {
   const fetchCandidates = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:3000/api/candidates");
+      const res = await axios.get(API_ENDPOINTS.CANDIDATE.CREATE);
       setCandidates(res.data);
     } catch (err) {
       console.error("Error fetching candidates", err);
@@ -67,7 +68,7 @@ const AddCandidate = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("http://localhost:3000/api/candidates/add", {
+      await axios.post(`${API_ENDPOINTS.CANDIDATE.CREATE}/add`, {
         ...formData,
         status: "pending",
       });
@@ -92,7 +93,7 @@ const AddCandidate = () => {
 
   const handleStatusUpdate = async (id, status) => {
     try {
-      await axios.patch(`http://localhost:3000/api/candidates/${id}`, {
+      await axios.patch(`${API_ENDPOINTS.CANDIDATE.CREATE}/${id}`, {
         status,
       });
       fetchCandidates();

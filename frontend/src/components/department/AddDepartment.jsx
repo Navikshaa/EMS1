@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../../config/api";
 
 const AddDepartment = () => {
   const [department, setDepartment] = useState({
@@ -15,7 +16,7 @@ const AddDepartment = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/department", {
+        const res = await axios.get(API_ENDPOINTS.DEPARTMENT.BASE, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -62,7 +63,7 @@ const AddDepartment = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:3000/api/department/add",
+        `${API_ENDPOINTS.DEPARTMENT.BASE}/add`,
         payload,
         {
           headers: {

@@ -5,6 +5,7 @@ import { FaCog, FaBell, FaComments } from "react-icons/fa";
 import logo1 from "../../assets/images/logo1.png";
 import { useSocket } from "../../context/SocketContext";
 import { useAuth } from "../../context/authContext";
+import API_ENDPOINTS from "../../config/api";
 
 const GroupList = () => {
   const [groups, setGroups] = useState([]);
@@ -21,8 +22,8 @@ const GroupList = () => {
     try {
       const endpoint =
         user?.role === "admin"
-          ? "http://localhost:3000/api/group"
-          : "http://localhost:3000/api/group/my-groups";
+          ? API_ENDPOINTS.GROUP.BASE
+          : API_ENDPOINTS.GROUP.BASE_GROUP;
 
       const res = await axios.get(endpoint, {
         headers: {
@@ -40,7 +41,7 @@ const GroupList = () => {
 
   const fetchDirectChats = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/direct-chats", {
+      const res = await axios.get(API_ENDPOINTS.CHAT.BASE, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       if (res.data.success) setDirectChats(res.data.chats || []);
@@ -111,10 +112,10 @@ const GroupList = () => {
 
   const getImageUrl = (path) => {
     if (!path || typeof path !== "string") {
-      return "http://localhost:3000/uploads/default-user.png";
+      return `${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/default-user.png`;
     }
     const cleanedPath = path.replace(/^public[\\/]/, "").replace(/\\/g, "/");
-    return `http://localhost:3000/${cleanedPath}`;
+    return `${API_ENDPOINTS}/${cleanedPath}`;
   };
 
   return (
@@ -167,8 +168,8 @@ const GroupList = () => {
             {directChats.map((chat) => {
               const name = chat.recipient?.name || "Unnamed";
               const profileImage = chat.recipient?.profileImage
-                ? `http://localhost:3000/uploads/${chat.recipient.profileImage}`
-                : "http://localhost:3000/uploads/default-user.png";
+                ? `${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/${chat.recipient.profileImage}`
+                : `${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/default-user.png`;
 
               return (
                 <div

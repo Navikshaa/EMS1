@@ -8,6 +8,7 @@ import { useSocket } from "../../context/SocketContext";
 import { FiSend, FiPaperclip, FiEdit, FiTrash } from "react-icons/fi";
 import EmojiPicker from "emoji-picker-react";
 import { format, isSameDay } from "date-fns";
+import API_ENDPOINTS from "../../config/api";
 
 const EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "👏", "🔥"];
 
@@ -31,13 +32,13 @@ const DirectChat = () => {
     const fetchChatData = async () => {
       const token = localStorage.getItem("token");
       const chatRes = await axios.get(
-        `http://localhost:3000/api/direct-chats/${id}`,
+        `${API_ENDPOINTS.CHAT.BASE}/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (chatRes.data.success) setChat(chatRes.data.chat);
 
       const msgRes = await axios.get(
-        `http://localhost:3000/api/direct-messages/${id}`,
+        `${API_ENDPOINTS.CHAT.GET_ALL}/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (msgRes.data.success) setMessages(msgRes.data.messages);
@@ -75,7 +76,7 @@ const DirectChat = () => {
   }, [messages]);
 
   const getFileURL = (filePath) =>
-    `http://localhost:3000/${filePath?.replace(/^public[\\/]/, "").replace(/\\/g, "/")}`;
+    `${API_ENDPOINTS}/${filePath?.replace(/^public[\\/]/, "").replace(/\\/g, "/")}`;
 
   const handleSend = async () => {
     if (!message.trim() && !file) return;
@@ -86,7 +87,7 @@ const DirectChat = () => {
     if (editMsgId) {
       try {
         const res = await axios.put(
-          `http://localhost:3000/api/direct-messages/${editMsgId}`,
+          `${API_ENDPOINTS.CHAT.GET_ALL}/${editMsgId}`,
           { message },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -108,7 +109,7 @@ const DirectChat = () => {
       formData.append("message", message);
       if (file) formData.append("file", file);
 
-      const res = await axios.post("http://localhost:3000/api/direct-messages", formData, {
+      const res = await axios.post(API_ENDPOINTS.CHAT.GET_ALL, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -133,7 +134,7 @@ const DirectChat = () => {
   const handleDelete = async (messageId) => {
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://localhost:3000/api/direct-messages/${messageId}`, {
+      await axios.delete(`${API_ENDPOINTS.CHAT.GET_ALL}/${messageId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
@@ -146,7 +147,7 @@ const DirectChat = () => {
     const token = localStorage.getItem("token");
     try {
       const res = await axios.post(
-        `http://localhost:3000/api/direct-messages/react/${messageId}`,
+        `${API_ENDPOINTS.CHAT.GET_ALL}/react/${messageId}`,
         { emoji },
         { headers: { Authorization: `Bearer ${token}` } }
       );

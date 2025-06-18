@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaCog } from "react-icons/fa";
 import { FiUpload, FiUserPlus, FiUserX } from "react-icons/fi";
+import API_ENDPOINTS from "../../config/api";
 
 const AddGroup = () => {
   const [activeTab, setActiveTab] = useState("groups");
@@ -19,7 +20,7 @@ const AddGroup = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/employee", {
+      const res = await axios.get(API_ENDPOINTS.EMPLOYEE.BASE, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -57,7 +58,7 @@ const AddGroup = () => {
       if (groupDP) formData.append("group_dp", groupDP);
       members.forEach((id) => formData.append("members", id));
 
-      const res = await axios.post("http://localhost:3000/api/group/add", formData, {
+      const res = await axios.post(API_ENDPOINTS.GROUP.GET_ALL, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

@@ -1,9 +1,10 @@
 import React from "react";
+import API_ENDPOINTS from "../../../config/api";
 
 const ViewModal = ({ isOpen, onClose, task }) => {
   if (!isOpen || !task || !task.initial_image) return null;
 
-  const imageUrl = `http://localhost:3000/uploads/${task.initial_image}`;
+  const imageUrl = `${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/${task.initial_image}`;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

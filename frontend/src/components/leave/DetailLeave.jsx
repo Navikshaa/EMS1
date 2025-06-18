@@ -3,6 +3,7 @@ import axios from "axios";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./calendar-custom.css";
+import API_ENDPOINTS from "../../config/api";
 
 const DetailLeave = ({ id, onClose }) => {
   const [leave, setLeave] = useState(null);
@@ -12,7 +13,7 @@ const DetailLeave = ({ id, onClose }) => {
     const fetchLeave = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/leave/detail/${id}`,
+          `${API_ENDPOINTS.LEAVE.BASE}/detail/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -39,7 +40,7 @@ const DetailLeave = ({ id, onClose }) => {
     try {
       const [startDate, endDate] = dateRange;
       const response = await axios.put(
-        `http://localhost:3000/api/leave/${id}`,
+        `${API_ENDPOINTS.LEAVE.BASE}/${id}`,
         { status, startDate, endDate },
         {
           headers: {
@@ -81,7 +82,7 @@ const DetailLeave = ({ id, onClose }) => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <img
-                src={`http://localhost:3000/uploads/${leave.employeeId.userId.profileImage}`}
+                src={`${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/${leave.employeeId.userId.profileImage}`}
                 alt="Profile"
                 className="w-20 h-20 rounded-full object-cover border"
               />

@@ -6,6 +6,7 @@ import { useAuth } from "../../context/authContext";
 import EmojiPicker from "emoji-picker-react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiSend, FiPaperclip } from "react-icons/fi";
+import API_ENDPOINTS from "../../config/api";
 
 const EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "👏", "🔥"];
 
@@ -56,7 +57,7 @@ const ChatRoom = () => {
       try {
         // ✅ 1. Get Group Details
         const groupRes = await axios.get(
-          `http://localhost:3000/api/group/${id}`,
+          `${API_ENDPOINTS.GROUP.BASE}/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -76,7 +77,7 @@ const ChatRoom = () => {
       try {
         // ✅ 2. Get Group Messages
         const msgRes = await axios.get(
-          `http://localhost:3000/api/messages/${id}`,
+          `${API_ENDPOINTS.MESSAGE.BASE}/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -95,7 +96,7 @@ const ChatRoom = () => {
       try {
         // ✅ 3. Get all groups (for forwarding)
         const groupsRes = await axios.get(
-          "http://localhost:3000/api/group/my-groups",
+          `${API_ENDPOINTS.GROUP.BASE}/my-groups`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -110,7 +111,7 @@ const ChatRoom = () => {
       try {
         // ✅ 4. If Admin, Fetch all employees for Add Member modal
         if (user?.role === "admin") {
-          const empRes = await axios.get("http://localhost:3000/api/employee", {
+          const empRes = await axios.get(API_ENDPOINTS.EMPLOYEE.BASE , {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (empRes.data.employees) {
@@ -172,7 +173,7 @@ const ChatRoom = () => {
     const cleanedPath = filePath
       .replace(/^public[\\/]/, "")
       .replace(/\\/g, "/");
-    return `http://localhost:3000/${cleanedPath}`;
+    return `${API_ENDPOINTS}/${cleanedPath}`;
   };
 
   const handleSend = async () => {
@@ -184,8 +185,7 @@ const ChatRoom = () => {
       formData.append("message", message);
       if (file) formData.append("file", file);
 
-      const res = await axios.post(
-        "http://localhost:3000/api/messages",
+      const res = await axios.post(API_ENDPOINTS.MESSAGE.BASE,
         formData,
         {
           headers: {
@@ -215,7 +215,7 @@ const ChatRoom = () => {
   const saveEditedMessage = async () => {
     try {
       const res = await axios.put(
-        `http://localhost:3000/api/messages/${editingMsgId}`,
+        `${API_ENDPOINTS.MESSAGE.BASE}/${editingMsgId}`,
         { message: editedText },
         {
           headers: {
@@ -241,7 +241,7 @@ const ChatRoom = () => {
   const handleAddMembers = async () => {
     try {
       const res = await axios.put(
-        `http://localhost:3000/api/group/${group._id}/add-members`,
+        `${API_ENDPOINTS.GROUP.BASE}/${group._id}/add-members`,
         { members: selectedMembers },
         {
           headers: {
@@ -265,7 +265,7 @@ const ChatRoom = () => {
       return;
     try {
       const res = await axios.delete(
-        `http://localhost:3000/api/messages/${msgId}`,
+        `${API_ENDPOINTS.MESSAGE.BASE}/${msgId}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -281,7 +281,7 @@ const ChatRoom = () => {
   const handleForward = async (targetGroupId, msg) => {
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/messages/forward",
+        `${API_ENDPOINTS.MESSAGE.BASE}/forward`,
         {
           messageId: msg._id,
           toGroupId: targetGroupId,
@@ -636,7 +636,7 @@ const ChatRoom = () => {
                   >
                     <div className="flex items-center gap-2">
                       <img
-                        src={`http://localhost:3000/${emp.userId.avatar?.replace(
+                        src={`${API_ENDPOINTS}/${emp.userId.avatar?.replace(
                           "public/",
                           ""
                         )}`}

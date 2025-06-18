@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import Leave from "../../assets/images/leave.png"
+import API_ENDPOINTS from "../../config/api";
 const List = () => {
   const [leaves, setLeaves] = useState([]);
   const { id } = useParams();
@@ -12,7 +13,7 @@ const List = () => {
   const fetchLeaves = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/leave/${id}`,
+        `${API_ENDPOINTS.LEAVE.BASE}/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

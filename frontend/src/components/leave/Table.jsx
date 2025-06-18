@@ -3,6 +3,7 @@ import DataTable from "react-data-table-component";
 import { getLeaveColumns, LeaveButtons } from "../../utils/LeaveHelper";
 import axios from "axios";
 import HeaderImg from "../../assets/images/leave.png";
+import API_ENDPOINTS from "../../config/api";
 
 const Table = () => {
   const [leaves, setLeaves] = useState(null);
@@ -12,7 +13,7 @@ const Table = () => {
 
   const fetchLeaves = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/leave", {
+      const response = await axios.get(API_ENDPOINTS.LEAVE.BASE, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -47,7 +48,7 @@ const Table = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/department", {
+      const response = await axios.get(API_ENDPOINTS.DEPARTMENT.BASE, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

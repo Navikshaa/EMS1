@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import API_ENDPOINTS from "../../../../config/api";
 
 const AddSalesForm = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +32,7 @@ const AddSalesForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3000/api/candidates", formData);
+      await axios.post(API_ENDPOINTS.CANDIDATE.BASE, formData);
       setMessage("✅ Candidate added successfully!");
       setFormData({
         candidate_name: "",

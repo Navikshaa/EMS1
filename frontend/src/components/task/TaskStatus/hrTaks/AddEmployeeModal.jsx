@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { fetchDepartments } from "../../../../utils/HrEmployeeHelper";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../../../../config/api";
 
 const AddEmployeeModal = ({ isOpen, onClose }) => {
   const [departments, setDepartments] = useState([]);
@@ -33,7 +34,7 @@ const AddEmployeeModal = ({ isOpen, onClose }) => {
       if (name === "department") {
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/department/${value}`
+            `${API_ENDPOINTS.DEPARTMENT.BASE}/${value}`
           );
           const subDeps = response.data.department.sub_departments || [];
           setSubDepartments(subDeps);
@@ -73,8 +74,7 @@ const AddEmployeeModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/employee/add",
+      const response = await axios.post(API_ENDPOINTS.EMPLOYEE.GET_ALL,
         formDataObj,
         {
           headers: {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../../config/api";
 
 const AttendanceUserList = () => {
   const [users, setUsers] = useState([]);
@@ -12,7 +13,7 @@ const AttendanceUserList = () => {
 
     const fetchAttendanceUsers = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/login-history");
+        const response = await fetch(API_ENDPOINTS.ADMIN_EDIT.BASE);
         if (!response.ok) throw new Error("Failed to fetch users");
 
         const data = await response.json();

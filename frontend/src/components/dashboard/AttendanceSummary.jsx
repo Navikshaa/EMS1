@@ -3,6 +3,7 @@ import axios from "axios";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import API_ENDPOINTS from "../../config/api";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
@@ -30,7 +31,7 @@ const DepartmentWiseAttendance = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3000/api/department", {
+      const res = await axios.get(API_ENDPOINTS.DEPARTMENT.BASE, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDepartments(res.data.departments || []);
@@ -47,7 +48,7 @@ const DepartmentWiseAttendance = () => {
         departments.map(async (dep) => {
           try {
             const res = await axios.get(
-              `http://localhost:3000/api/login-history/department/${dep._id}`,
+              `${API_ENDPOINTS.SUMMARY.BASE}/department/${dep._id}`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
 

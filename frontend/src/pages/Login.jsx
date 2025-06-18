@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
+import API_ENDPOINTS from "../config/api";
+
 
 // ✅ Import assets
 import Logo from "../assets/images/Logo.png";
@@ -19,7 +21,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/login", {
+      const response = await axios.post(API_ENDPOINTS.AUTH.LOGIN, {
         email,
         password,
       });

@@ -5,6 +5,7 @@ import axios from "axios";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import LeaveHeader from "../../assets/images/leave_task_header[1].png"
+import API_ENDPOINTS from "../../config/api";
 
 const ApplyLeave = () => {
   const { user } = useAuth();
@@ -32,7 +33,7 @@ const ApplyLeave = () => {
 
   const fetchLeaves = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/leave/${user._id}`, {
+      const res = await axios.get(`${API_ENDPOINTS.LEAVE.BASE}/${user._id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -104,7 +105,7 @@ const ApplyLeave = () => {
         endDate: dateRange[1],
       };
 
-      const res = await axios.post("http://localhost:3000/api/leave/add", payload, {
+      const res = await axios.post(API_ENDPOINTS.LEAVE.GET_ALL, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

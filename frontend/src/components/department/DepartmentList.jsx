@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { columns, DepartmentButtons } from "../../utils/DepartmentHelper";
+import API_ENDPOINTS from "../../config/api";
 
 const DepartmentList = () => {
   const [departments, setDepartments] = useState([]);
@@ -12,7 +13,7 @@ const DepartmentList = () => {
     const fetchDepartments = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/department/with-count",
+          `${API_ENDPOINTS.DEPARTMENT.BASE}/with-count`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

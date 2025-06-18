@@ -29,7 +29,7 @@ const Edit = () => {
     const fetchEmployee = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/employee/${id}`,
+          `${API_ENDPOINTS.EMPLOYEE.BASE}/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -68,7 +68,7 @@ const Edit = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/employee/${id}`,
+          `${API_ENDPOINTS.EMPLOYEE.BASE}/${id}`,
         employee,
         {
           headers: {

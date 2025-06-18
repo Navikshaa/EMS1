@@ -9,10 +9,13 @@ import {
   FaPlaneDeparture,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext"; // ✅ Use your auth context
 
 // 🔘 Action Buttons
 export const EmployeeButtons = ({ Id }) => {
   const navigate = useNavigate();
+  const { user } = useAuth(); // ✅ Access user from context
+
   const buttonBaseClasses =
     "flex items-center justify-center gap-1 border border-gray-400 text-gray-700 px-2 py-1 rounded-md text-sm hover:bg-gray-100 transition-all w-[100px]";
 
@@ -26,30 +29,43 @@ export const EmployeeButtons = ({ Id }) => {
         <FaEye />
         View
       </button>
+
       <button
         title="Edit"
         className={buttonBaseClasses}
-        onClick={() => navigate(`/admin-dashboard/employees/edit/${Id}`)}
+        onClick={() => {
+          if (user?.role === "employees") {
+            navigate(`/employee-dashboard/tasks/employees/edit/${Id}`);
+          } else {
+            navigate(`/admin-dashboard/employees/edit/${Id}`);
+          }
+        }}
       >
         <FaEdit />
         Edit
       </button>
-      <button
-        title="Salary"
-        className={buttonBaseClasses}
-        onClick={() => navigate(`/admin-dashboard/employees/salary/${Id}`)}
-      >
-        <FaMoneyCheckAlt />
-        Salary
-      </button>
-      <button
-        title="Leave"
-        className={buttonBaseClasses}
-        onClick={() => navigate(`/admin-dashboard/employees/leaves/${Id}`)}
-      >
-        <FaPlaneDeparture />
-        Leave
-      </button>
+
+      {user?.role !== "employee" && (
+        <>
+          <button
+            title="Salary"
+            className={buttonBaseClasses}
+            onClick={() => navigate(`/admin-dashboard/employees/salary/${Id}`)}
+          >
+            <FaMoneyCheckAlt />
+            Salary
+          </button>
+
+          <button
+            title="Leave"
+            className={buttonBaseClasses}
+            onClick={() => navigate(`/admin-dashboard/employees/leaves/${Id}`)}
+          >
+            <FaPlaneDeparture />
+            Leave
+          </button>
+        </>
+      )}
     </div>
   );
 };

@@ -6,6 +6,7 @@ import DataTable from "react-data-table-component";
 import { columns } from "../../../../utils/HrEmployeeHelper";
 import headerImage from "../../../../assets/images/AddEmployeehr.png";
 import AddEmployeeModal from "./AddEmployeeModal";
+import API_ENDPOINTS from "../../../../config/api";
 
 const EmList = () => {
   const [employees, setEmployees] = useState([]);
@@ -20,7 +21,7 @@ const EmList = () => {
     const fetchEmployees = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:3000/api/employee", {
+        const response = await axios.get(API_ENDPOINTS.EMPLOYEE.BASE, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

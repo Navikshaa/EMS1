@@ -21,9 +21,9 @@ const dayColors = {
 
 const getWeekDates = () => {
   const today = new Date();
-  const day = today.getDay(); // 0 (Sun) - 6 (Sat)
+  const day = today.getDay();
   const monday = new Date(today);
-  monday.setDate(today.getDate() - ((day + 6) % 7)); // Go to Monday
+  monday.setDate(today.getDate() - ((day + 6) % 7));
   const result = [];
   for (let i = 0; i < 6; i++) {
     const date = new Date(monday);
@@ -34,7 +34,6 @@ const getWeekDates = () => {
 };
 
 const formatDate = (date) => date.toISOString().split("T")[0];
-
 
 const CustomGauge = ({ value }) => {
   const percent = Math.min(Math.max(value, 0), 100);
@@ -83,38 +82,24 @@ const OpTargetList = () => {
         const response = await axios.get("http://localhost:3000/api/salestask");
         const allTasks = response.data || [];
 
-        const doneTasks = allTasks.filter((task) => task.status === "done");
-        const pendingTasks = allTasks.filter((task) => task.status === "pending");
         const now = new Date();
         const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(now.getDate() - 6); // Last 7 days including today
+        oneWeekAgo.setDate(now.getDate() - 6);
 
         const recentPartialDone = allTasks.filter(
           (task) =>
             task.status === "partial_done" &&
             new Date(task.updatedAt) >= oneWeekAgo
         );
-
         const permanentDone = allTasks.filter((task) => task.status === "done");
-
         const doneTasks = [...permanentDone, ...recentPartialDone];
-        const pendingTasks = allTasks.filter(
-          (task) => task.status === "pending"
-        );
+
+        const pendingTasks = allTasks.filter((task) => task.status === "pending");
 
         setTaskCompletedPoints(doneTasks.length);
         setTaskInProgressPoints(pendingTasks.length);
 
-        // Group partial_done by day of the week for the last 7 days
-        const dayMap = {
-          Monday: 0,
-          Tuesday: 0,
-          Wednesday: 0,
-          Thursday: 0,
-          Friday: 0,
-          Saturday: 0,
-          Sunday: 0,
-        };
+        const weekDates = getWeekDates();
 
         const grouped = weekDates.map((dateObj) => {
           const dateStr = formatDate(dateObj);
@@ -130,29 +115,7 @@ const OpTargetList = () => {
             taskCount: countForDay,
             color: dayColors[day] || "#ccc",
           };
-        allTasks.forEach((task) => {
-          const updatedAt = new Date(task.updatedAt);
-          if (
-            task.status === "partial_done" &&
-            updatedAt >= oneWeekAgo &&
-            updatedAt <= now
-          ) {
-            const day = updatedAt.toLocaleDateString("en-US", {
-              weekday: "long",
-            });
-            if (dayMap[day] !== undefined) {
-              dayMap[day]++;
-            }
-          }
         });
-
-        const grouped = Object.entries(dayMap)
-          .filter(([day]) => day !== "Sunday") // Optional: remove Sunday
-          .map(([day, count]) => ({
-            day,
-            taskCount: count,
-            color: dayColors[day] || "#ccc",
-          }));
 
         setBarData(grouped);
       } catch (err) {

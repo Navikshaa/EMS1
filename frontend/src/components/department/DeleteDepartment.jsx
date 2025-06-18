@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import API_ENDPOINTS from "../../config/api";
 
 const DeleteDepartment = () => {
   const { id } = useParams();
@@ -14,7 +15,7 @@ const DeleteDepartment = () => {
     const deleteDepartment = async () => {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:3000/api/department/${id}`, {
+        await axios.delete(`${API_ENDPOINTS.DEPARTMENT.BASE}/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

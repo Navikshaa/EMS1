@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../../../../config/api";
 
 const AttendanceUserList = () => {
   const [employees, setEmployees] = useState([]);
@@ -15,7 +16,7 @@ const AttendanceUserList = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/department");
+        const res = await fetch(API_ENDPOINTS.DEPARTMENT.BASE);
         const data = await res.json();
         setDepartments(data.departments || []);
       } catch (err) {
@@ -30,7 +31,7 @@ const AttendanceUserList = () => {
     const fetchEmployees = async () => {
       setLoading(true);
       try {
-        const res = await fetch("http://localhost:3000/api/employee");
+        const res = await fetch(API_ENDPOINTS.EMPLOYEE.BASE);
         const data = await res.json();
         setEmployees(data.employees || []);
       } catch (err) {

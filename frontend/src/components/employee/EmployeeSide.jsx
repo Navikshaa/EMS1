@@ -13,6 +13,7 @@ import {
   FaCheckCircle,
   FaBriefcase,
 } from "react-icons/fa";
+import API_ENDPOINTS from "../../config/api";
 
 const View = () => {
   const { id } = useParams();
@@ -23,7 +24,7 @@ const View = () => {
     const fetchEmployee = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/employee/${id}`,
+          `${API_ENDPOINTS.EMPLOYEE.BASE}/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -53,7 +54,7 @@ const View = () => {
         <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 w-32 h-32 rounded-full border-4 border-white shadow-md bg-white overflow-hidden">
           {employee?.userId?.profileImage ? (
             <img
-              src={`http://localhost:3000/uploads/${employee.userId.profileImage}`}
+              src={`${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/${employee.userId.profileImage}`}
               alt="Profile"
               className="w-full h-full object-cover"
             />

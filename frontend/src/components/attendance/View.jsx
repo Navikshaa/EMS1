@@ -5,6 +5,7 @@ import axios from "axios";
 import { useAuth } from "../../context/authContext";
 import { FaFilter, FaRegClock } from "react-icons/fa";
 import "./AttendanceCalendar.css";
+import API_ENDPOINTS from "../../config/api";
 
 const AttendanceCalendar = () => {
   const { user } = useAuth();
@@ -46,7 +47,7 @@ const AttendanceCalendar = () => {
       if (!user?._id) return;
 
       const res = await axios.get(
-        `http://localhost:3000/api/login-history/${user._id}`,
+        `${API_ENDPOINTS.ADMIN_EDIT.BASE}/${user._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { fetchDepartments } from "../../../../utils/EmployeeHelper";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import API_ENDPOINTS from "../../../../config/api";
 
 const EditEmployee = () => {
   const [employee, setEmployee] = useState({
@@ -30,7 +31,7 @@ const EditEmployee = () => {
     const fetchEmployee = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/employee/${id}`,
+          `${API_ENDPOINTS.EMPLOYEE.BASE}/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -66,7 +67,7 @@ const EditEmployee = () => {
     e.preventDefault();
     try {
       const res = await axios.put(
-        `http://localhost:3000/api/employee/${id}`,
+        `${API_ENDPOINTS.EMPLOYEE.BASE}/${id}`,
         employee,
         {
           headers: {

@@ -208,6 +208,8 @@ function App() {
           <Route path="tasks/department/:id" element={<EmTasklist />} />
           <Route path="tasks/hr/task" element={<HrTask />} />
           <Route path="tasks/hr/task/Onboarding" element={<Onboarding1 />} />
+          <Route path="tasks/employees/:id" element={<View />} />
+
 
           <Route path="task/employees" element={<EmList />} />
           <Route path="hr/attendance" element={<AttendanceUserList />} />

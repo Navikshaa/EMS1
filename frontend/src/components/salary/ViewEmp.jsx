@@ -5,6 +5,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import Leave from "../../assets/images/Salary.jpg"
 import autoTable from "jspdf-autotable";
+import API_ENDPOINTS from "../../config/api";
 
 const View = () => {
   const [salaries, setSalaries] = useState(null);
@@ -15,7 +16,7 @@ const View = () => {
   const fetchSalaries = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/salary/${id}`,
+        `${API_ENDPOINTS.SALARY.BASE}/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

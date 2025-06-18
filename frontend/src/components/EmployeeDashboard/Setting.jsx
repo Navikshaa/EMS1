@@ -2,6 +2,7 @@ import React, {  useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import axios from "axios";
+import API_ENDPOINTS from "../../config/api";
 
 const Setting = () => {
   const { user } = useAuth();
@@ -28,8 +29,7 @@ const Setting = () => {
       setError("New password and confirm password do not match");
     } else {
       try {
-        const response = await axios.put(
-          "http://localhost:3000/api/setting/change-password",
+        const response = await axios.put(API_ENDPOINTS.PASSWORD.UPDATE,
           setting,
           {
             headers: {

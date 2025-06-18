@@ -14,6 +14,7 @@ import {
 import axios from "axios";
 import DepartmentSalaryChart from "./DepartmentSalaryChart.jsx";
 import DepartmentWiseAttendance from "./AttendanceSummary.jsx";
+import API_ENDPOINTS from "../../config/api.js";
 
 const AdminSummary = () => {
   const [summary, setSummary] = useState(null);
@@ -26,8 +27,7 @@ const AdminSummary = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/api/dashboard/summary",
+        const res = await axios.get(API_ENDPOINTS.SUMMARY.BASE,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -44,7 +44,7 @@ const AdminSummary = () => {
           `year=${selectedYear}` +
           (selectedMonth ? `&month=${selectedMonth}` : "");
         const res = await axios.get(
-          `http://localhost:3000/api/salary/department-salary?${query}`,
+          `${API_ENDPOINTS.SUMMARY.GET_ALL}/department-salary?${query}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
