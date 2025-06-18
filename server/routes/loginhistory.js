@@ -10,14 +10,14 @@ import authMiddleware from "../middleware/authMiddlware.js";
 
 const router = express.Router();
 
-router.get("/", getAllLoginHistoryUsers);
+router.get("/",  authMiddleware, getAllLoginHistoryUsers);
 // GET /api/login-history/:employeeId
-router.get("/:userId", getLoginHistoryByUserId);
+router.get("/:userId", authMiddleware,getLoginHistoryByUserId);
 
-router.get("/department/:depId", getLoginHistoryByDepartmentId);
+router.get("/department/:depId",authMiddleware ,getLoginHistoryByDepartmentId);
 
-router.post("/", createOrUpdateLoginHistory);
+router.post("/", authMiddleware, createOrUpdateLoginHistory);
 
-router.put("/edit/:userId", editLoginHistoryByUserId);
+router.put("/edit/:userId",authMiddleware, editLoginHistoryByUserId);
 
 export default router;

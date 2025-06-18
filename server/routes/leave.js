@@ -1,6 +1,7 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddlware.js";
 import {
+  upload,
   addLeave,
   getLeave,
   getLeaves,
@@ -10,7 +11,7 @@ import {
 } from "../controllers/leaveController.js";
 
 const router = express.Router();
-router.post("/add", authMiddleware, addLeave);
+router.post("/add", upload.single("medicalProof"), addLeave);
 router.get("/:id", authMiddleware, getLeave);
 router.get("/detail/:id", authMiddleware, getLeaveDetail);
 router.get("/", authMiddleware, getLeaves);

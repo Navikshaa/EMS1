@@ -20,7 +20,7 @@ import summaryRoutes from "./routes/summary.js";
 import pfRouter from "./routes/pf.js";
 import loginHistoryRoutes from "./routes/loginhistory.js";
 import dashboardRouter from "./routes/dashboard.js";
-import attendanceRoutes from "./routes/attendance.js";
+
 import taskRoutes from "./routes/task.js";
 import salesRoutes from "./routes/saleTask.js";
 import targetRoutes from "./routes/target.js";
@@ -42,6 +42,7 @@ connectToDatabase();
 
 // Initialize Express
 const app = express();
+app.use(express.urlencoded({ extended: true }));
 const server = http.createServer(app);
 
 // Setup Socket.io
@@ -79,7 +80,6 @@ app.use("/api/dashboard", dashboardRouter);
 app.use("/api/summary", summaryRoutes);
 app.use("/api/pf", pfRouter);
 app.use("/api/login-history", loginHistoryRoutes);
-app.use("/api/attendance", attendanceRoutes);
 
 app.use("/api/task", taskRoutes);
 app.use("/api/salestask", salesRoutes);
@@ -87,7 +87,7 @@ app.use("/api/targets", targetRoutes);
 
 app.use("/api/admin", adminRouter);
 app.use("/api/group", groupRouter);
-app.use("/api/messages", groupMessageRouter); 
+app.use("/api/messages", groupMessageRouter);
 app.use("/uploads/image", express.static("public/uploads/image"));
 app.use("/uploads", express.static("public/uploads"));
 

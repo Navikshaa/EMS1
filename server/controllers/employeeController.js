@@ -26,7 +26,10 @@ const addEmployee = async (req, res) => {
     // ✅ Check if user is authorized
     const loggedInUser = req.user;
 
-    if (!loggedInUser || (loggedInUser.role !== "admin" && loggedInUser.role !== "employee")) {
+    if (
+      !loggedInUser ||
+      (loggedInUser.role !== "admin" && loggedInUser.role !== "employee")
+    ) {
       return res.status(403).json({
         success: false,
         error: "Access denied: Not authorized to add employee",
@@ -74,7 +77,9 @@ const addEmployee = async (req, res) => {
     // ✅ Check if user already exists
     const user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ success: false, error: "User already exists" });
+      return res
+        .status(400)
+        .json({ success: false, error: "User already exists" });
     }
 
     // ✅ Hash the password
@@ -144,7 +149,6 @@ const addEmployee = async (req, res) => {
   }
 };
 
-
 // Get all employees
 const getEmployees = async (req, res) => {
   try {
@@ -188,41 +192,82 @@ const getEmployee = async (req, res) => {
 const updateEmployee = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, maritalStatus, status, designation, department, salary, role } =
-      req.body;
+    const {
+      name,
+      username,
+      maritalStatus,
+      status,
+      designation,
+      department,
+      salary,
+      role,
+      nvkshPerno,
+      nvkshUnitPerno,
+      grade,
+      employeeIdText,
+      doj,
+      hire,
+      bankac,
+      bankacname,
+      bankname,
+      branchname,
+      accountType,
+      ifsc,
+      // password field removed
+    } = req.body;
 
+    // Find employee and associated user
     const employee = await Employee.findById(id);
     if (!employee) {
       return res
         .status(404)
-        .json({ success: false, error: "employee not found" });
+        .json({ success: false, error: "Employee not found" });
     }
+
     const user = await User.findById(employee.userId);
     if (!user) {
-      return res.status(404).json({ success: false, error: "user not found" });
+      return res.status(404).json({ success: false, error: "User not found" });
     }
 
-    const updateUser = await User.findByIdAndUpdate(employee.userId, { name });
-    const updateEmployee = await Employee.findByIdAndUpdate(id, {
-      maritalStatus,
-      designation,
-      status,
-      name,
-      salary,
-      department,
-      role,
+    // Update User model (name, username, role)
+    user.name = name || user.name;
+    user.username = username || user.username;
+    user.role = role || user.role;
+    // password update logic removed
+    await user.save();
+
+    // Update Employee model
+    employee.name = name || employee.name;
+    employee.maritalStatus = maritalStatus || employee.maritalStatus;
+    employee.status = status || employee.status;
+    employee.designation = designation || employee.designation;
+    employee.department = department || employee.department;
+    employee.salary = salary || employee.salary;
+    employee.nvkshPerno = nvkshPerno || employee.nvkshPerno;
+    employee.nvkshUnitPerno = nvkshUnitPerno || employee.nvkshUnitPerno;
+    employee.grade = grade || employee.grade;
+    employee.employeeId = employeeIdText || employee.employeeId;
+    employee.doj = doj || employee.doj;
+    employee.hire = hire || employee.hire;
+    employee.bankac = bankac || employee.bankac;
+    employee.bankacname = bankacname || employee.bankacname;
+    employee.bankname = bankname || employee.bankname;
+    employee.branchname = branchname || employee.branchname;
+    employee.accountType = accountType || employee.accountType;
+    employee.ifsc = ifsc || employee.ifsc;
+
+    await employee.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Employee updated successfully",
     });
-
-    if (!updateEmployee || !updateUser) {
-      return res
-        .status(404)
-        .json({ success: false, error: "document not found" });
-    }
-    return res.status(200).json({ success: true, message: "employee updated" });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ success: false, error: "update employees server error" });
+    console.error("Error updating employee:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Server error while updating employee",
+    });
   }
 };
 
