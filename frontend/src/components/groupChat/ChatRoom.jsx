@@ -301,13 +301,25 @@ const ChatRoom = () => {
     }
   };
 
-  const handleReaction = (emoji, messageId) => {
-    socket.emit("send-reaction", {
-      messageId,
-      emoji,
-      userId: user._id,
-    });
-    setShowReactionPicker(null);
+  const handleReaction = async (msgId, emoji) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await axios.post(
+        `http://localhost:3000/api/messages/react/${msgId}`,
+        { emoji },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (res.data.success) {
+        setMessages((prev) =>
+          prev.map((msg) => (msg._id === msgId ? res.data.message : msg))
+        );
+        setShowReactionPicker(null);
+      }
+    } catch (err) {
+      console.error("Reaction error:", err);
+    }
   };
 
   return (
@@ -435,20 +447,6 @@ const ChatRoom = () => {
                   </div>
                 )}
 
-                {/* Reactions */}
-                {msg.reactions && msg.reactions.length > 0 && (
-                  <div className="text-xs mt-2 flex flex-wrap gap-1">
-                    {msg.reactions.map((r, index) => (
-                      <span
-                        key={index}
-                        className="bg-gray-200 px-1.5 py-0.5 rounded-full"
-                      >
-                        {r.emoji}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
                 {/* Timestamp & Status */}
                 <div className="text-xs text-right text-gray-500 mt-1 flex items-center gap-1">
                   {formatTime(msg.createdAt)}
@@ -464,56 +462,70 @@ const ChatRoom = () => {
                     </>
                   )}
                 </div>
-
-                {/* Action buttons */}
-                {activeMessageId === msg._id && (
-                  <div className="mt-2 flex gap-3 text-xs bg-gray-100 p-1 rounded shadow-inner">
-                    {canEdit && (
-                      <>
-                        <button
-                          onClick={() => handleEdit(msg)}
-                          className="text-blue-600 hover:underline"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(msg._id)}
-                          className="text-red-500 hover:underline"
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
-                    <button
-                      onClick={() => alert("Reply not implemented")}
-                      className="text-yellow-600 hover:underline"
-                    >
-                      Reply
-                    </button>
-                    <button
-                      onClick={() => setForwardModalMsg(msg)}
-                      className="text-green-600 hover:underline"
-                    >
-                      Forward
-                    </button>
-                    <button
-                      onClick={() => setShowReactionPicker(msg._id)}
-                      className="text-pink-600 hover:underline"
-                    >
-                      😊
-                    </button>
-                  </div>
-                )}
-
-                {/* Emoji picker */}
-                {showReactionPicker === msg._id && (
-                  <div className="absolute left-0 bottom-full z-50">
-                    <EmojiPicker
-                      onEmojiClick={(e) => handleReaction(e.emoji, msg._id)}
-                    />
+                {/* Reactions */}
+                {msg.reactions && msg.reactions.length > 0 && (
+                  <div className="text-xs mt-2 flex flex-wrap gap-1">
+                    {msg.reactions.map((r, index) => (
+                      <span
+                        key={index}
+                        className="bg-gray-200 px-1.5 py-0.5 rounded-full"
+                      >
+                        {r.emoji}
+                      </span>
+                    ))}
                   </div>
                 )}
               </div>
+
+              {/* Action buttons */}
+              {activeMessageId === msg._id && (
+                <div
+                  className={`absolute -top-6 ${
+                    isOwn ? "right-0" : "left-0"
+                  } bg-white rounded-md px-2 py-1 text-xs shadow-md flex gap-2 z-10`}
+                >
+                  {canEdit && (
+                    <>
+                      <button
+                        onClick={() => handleEdit(msg)}
+                        className="text-blue-600 hover:underline"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(msg._id)}
+                        className="text-red-500 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={() => setShowReactionPicker(msg._id)}
+                    className="text-pink-600 hover:underline"
+                  >
+                    😊
+                  </button>
+                </div>
+              )}
+
+              {/* Emoji picker */}
+              {showReactionPicker === msg._id && (
+                <div
+                  className="absolute -top-10 left-0 z-50 bg-white shadow-md rounded-md px-2 py-1 flex gap-1
+                  transition-opacity duration-300 ease-in-out opacity-100 scale-100 animate-fadeIn"
+                >
+                  {EMOJIS.map((emoji) => (
+                    <button
+                      key={emoji}
+                      onClick={() => handleReaction(msg._id, emoji)}
+                      className="text-xl hover:scale-110 transition-transform"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}

@@ -30,14 +30,15 @@ router.get("/:groupId", authMiddleware, getGroupMessages);
 router.put("/:id", authMiddleware, updateGroupMessage);
 router.delete("/:id", authMiddleware, deleteGroupMessage);
 router.post("/upload", authMiddleware, upload.single("file"), (req, res) => {
-  if (!req.file) return res.status(400).json({ success: false, error: "No file uploaded" });
+  if (!req.file)
+    return res.status(400).json({ success: false, error: "No file uploaded" });
 
   res.status(200).json({
     success: true,
     url: `/uploads/messages/${req.file.filename}`,
   });
 });
-router.post("/:id/react", authMiddleware, reactToMessage);
+router.post("/react/:msgId", authMiddleware, reactToMessage);
 router.post("/forward", authMiddleware, forwardMessage);
 
 export default router;
