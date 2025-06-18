@@ -10,6 +10,7 @@ import {
   Cell,
 } from "recharts";
 import bgImage from "../../../assets/images/Task_bg.jpeg";
+import API_ENDPOINTS from "../../../config/api";
 
 const dayColors = {
   Monday: "#3b82f6",
@@ -86,7 +87,7 @@ const MarketTargetList = ({ employeeName }) => {
   useEffect(() => {
     const fetchTargets = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/targets");
+        const response = await axios.get(API_ENDPOINTS.TARGET.BASE);
         setTargets(response.data);
       } catch (error) {
         console.error("Error fetching targets:", error);
@@ -104,7 +105,7 @@ const MarketTargetList = ({ employeeName }) => {
       setLoadingChart(true);
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/salestask/marketed-from/${employeeName}`
+          `${API_ENDPOINTS.TASKS.BASE}/marketed-from/${employeeName}`
         );
         const allTasks = response.data || [];
 

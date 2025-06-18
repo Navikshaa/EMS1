@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../config/api";
 
 const SetNewPassword = () => {
   const [password, setPassword] = useState("");
@@ -17,7 +18,7 @@ const SetNewPassword = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/set-password",
+        `${API_ENDPOINTS.AUTH.PASSWORD}/set-password`,
         { password },
         {
           headers: {

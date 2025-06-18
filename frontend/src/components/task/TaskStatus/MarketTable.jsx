@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../context/authContext";
+import API_ENDPOINTS from "../../../config/api";
 
 const MarketTable = () => {
   const { user } = useAuth();
@@ -14,7 +15,7 @@ const MarketTable = () => {
     const employeeName = encodeURIComponent(user.name);
 
     const fetchData = () => {
-      fetch(`http://localhost:3000/api/salestask/marketed-from/${employeeName}`)
+      fetch(`${API_ENDPOINTS.TASKS.BASE}/marketed-from/${employeeName}`)
         .then((res) => res.json())
         .then(setSalesData)
         .catch((err) => console.error("Fetch failed:", err));

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import html2canvas from "html2canvas";
 import templateImage from "../../assets/templates/training_template.jpg";
+import API_ENDPOINTS from "../../config/api";
 
 const TrainingCertificate = ({ training_certificate_id }) => {
   const [data, setData] = useState(null);
@@ -9,7 +10,7 @@ const TrainingCertificate = ({ training_certificate_id }) => {
   // Fetch certificate data by ID
   useEffect(() => {
     fetch(
-      `http://localhost:3000/api/salestask/certificate/training/${training_certificate_id}`
+      `${API_ENDPOINTS.TASKS.BASE}/certificate/training/${training_certificate_id}`
     )
       .then((res) => res.json())
       .then((res) => setData(res[0]))

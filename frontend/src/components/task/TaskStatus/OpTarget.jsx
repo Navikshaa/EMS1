@@ -9,6 +9,7 @@ import {
   Cell,
 } from "recharts";
 import bgImage from "../../../assets/images/Task_bg.jpeg";
+import API_ENDPOINTS from "../../../config/api";
 
 const dayColors = {
   Monday: "#3b82f6",
@@ -79,7 +80,7 @@ const OpTargetList = () => {
     const fetchSalesData = async () => {
       setLoadingChart(true);
       try {
-        const response = await axios.get("http://localhost:3000/api/salestask");
+        const response = await axios.get(API_ENDPOINTS.TASKS.BASE);
         const allTasks = response.data || [];
 
         const now = new Date();

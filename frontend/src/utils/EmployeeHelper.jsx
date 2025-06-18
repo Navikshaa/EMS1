@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext"; // ✅ Use your auth context
+import API_ENDPOINTS from "../config/api";
 
 // 🔘 Action Buttons
 export const EmployeeButtons = ({ Id }) => {
@@ -77,7 +78,7 @@ export const columns = [
     cell: (row) =>
       row.profileImage ? (
         <img
-          src={`http://localhost:3000/uploads/${row.profileImage}`}
+          src={`${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/${row.profileImage}`}
           alt={row.name}
           className="w-10 h-10 rounded-full border shadow-sm object-cover"
         />
@@ -140,7 +141,7 @@ export const columns = [
 // Fetch Departments
 export const fetchDepartments = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/api/department", {
+    const response = await axios.get(API_ENDPOINTS.DEPARTMENT.BASE, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -156,7 +157,7 @@ export const fetchDepartments = async () => {
 export const getEmployees = async (id) => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/api/employee/department/${id}`,
+      `${API_ENDPOINTS.EMPLOYEE.BASE}/department/${id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -178,7 +179,7 @@ export const EmployeeTable = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/employee", {
+      const res = await axios.get(API_ENDPOINTS.EMPLOYEE.BASE, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

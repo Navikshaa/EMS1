@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // ✅ import navigate
+import API_ENDPOINTS from "../config/api";
 
 const AdminResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ const AdminResetPassword = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/admin/reset-password-by-email",
+        `${API_ENDPOINTS.ADMIN.BASE}/reset-password-by-email`,
         { email, newPassword },
         {
           headers: {

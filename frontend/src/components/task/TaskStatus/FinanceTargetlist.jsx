@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import bgImage from "../../../assets/images/Task_bg.jpeg";
+import API_ENDPOINTS from "../../../config/api";
 
 const CustomGauge = ({ value, label }) => {
   const percent = Math.min(Math.max(value, 0), 100);
@@ -47,7 +48,7 @@ const FinanceTargetList = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/salestask");
+        const response = await axios.get(API_ENDPOINTS.TASKS.BASE);
         const allTasks = response.data || [];
 
         const credited = allTasks.filter((task) => task.status === "done");

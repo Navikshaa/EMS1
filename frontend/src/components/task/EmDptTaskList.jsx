@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../../config/api";
 
 const EmDptTaskList = ({ departmentId }) => {
   const [departments, setDepartments] = useState([]);
@@ -10,7 +11,7 @@ const EmDptTaskList = ({ departmentId }) => {
     const fetchDepartments = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3000/api/department", {
+        const res = await fetch(API_ENDPOINTS.DEPARTMENT.BASE, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

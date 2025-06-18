@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import API_ENDPOINTS from "../../config/api";
 
 const StatusTable = () => {
   const [groupedTasks, setGroupedTasks] = useState({
@@ -12,7 +13,7 @@ const StatusTable = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/task");
+      const res = await axios.get(API_ENDPOINTS.TASKS.CREATE);
       const tasks = res.data.tasks || [];
 
       const today = new Date();

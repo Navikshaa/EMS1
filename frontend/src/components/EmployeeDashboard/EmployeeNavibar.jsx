@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext";
 import axios from "axios";
 import { FaUserCircle, FaCalendarAlt, FaCog } from "react-icons/fa";
+import API_ENDPOINTS from "../../config/api";
 
 // Color map for attendance status
 const attendanceColors = {
@@ -27,7 +28,7 @@ const EmployeeNavbar = () => {
     const fetchLoginHistory = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/login-history/${user._id}`
+          `${API_ENDPOINTS.ADMIN_EDIT.BASE}/${user._id}`
         );
 
         const history = res.data.data;

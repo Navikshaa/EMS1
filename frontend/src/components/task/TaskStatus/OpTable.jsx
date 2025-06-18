@@ -4,6 +4,7 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import { LiaCertificateSolid } from "react-icons/lia";
 import { HiOutlineDocumentDownload } from "react-icons/hi";
 import { FaCheckCircle } from "react-icons/fa";
+import API_ENDPOINTS from "../../../config/api";
 
 const OpTable = () => {
   const [salesData, setSalesData] = useState([]);
@@ -27,7 +28,7 @@ const OpTable = () => {
   }, [clicked]);
 
   const fetchSalesData = () => {
-    fetch("http://localhost:3000/api/salestask")
+    fetch(API_ENDPOINTS.TASKS.BASE)
       .then((res) => {
         if (!res.ok) throw new Error("Network response was not ok");
         return res.json();
@@ -58,7 +59,7 @@ const OpTable = () => {
       formData.append("id", id);
 
       const res = await fetch(
-        "http://localhost:3000/api/salestask/upload-image",
+        `${API_ENDPOINTS.TASKS.BASE}/upload-image`,
         {
           method: "POST",
           body: formData,
@@ -85,7 +86,7 @@ const OpTable = () => {
   const handleDeleteImage = async (id) => {
     try {
       const res = await fetch(
-        `http://localhost:3000/api/salestask/delete-image/${id}`,
+        `${API_ENDPOINTS.TASKS.BASE}/delete-image/${id}`,
         {
           method: "DELETE",
         }
@@ -134,7 +135,7 @@ const OpTable = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/certificate/generate/${id}`
+        `${API_ENDPOINTS.CERTIFICATE.GET_ALL}/${id}`
       );
 
       if (!response.ok) throw new Error("Failed to generate certificate");
@@ -172,7 +173,7 @@ const OpTable = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/internships/generate/${id}`
+        `${API_ENDPOINTS.CERTIFICATE.GET_ONE}/${id}`
       );
 
       if (!response.ok)
@@ -202,7 +203,7 @@ const OpTable = () => {
   const handleDownloadOfferLetter = async (id, name) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/offer-letter/generate/${id}`
+        `${API_ENDPOINTS.CERTIFICATE.CREATE}/${id}`
       );
       if (!response.ok) throw new Error("Failed to generate offer letter");
 
@@ -225,7 +226,7 @@ const OpTable = () => {
   const handleMarkAsDone = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/salestask/${id}`,
+        `${API_ENDPOINTS.TASKS.BASE}/${id}`,
         {
           method: "PUT",
           headers: {

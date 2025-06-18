@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import API_ENDPOINTS from "../../../config/api";
 
 const FinanceTable = () => {
   const [salesData, setSalesData] = useState([]);
@@ -32,7 +33,7 @@ const FinanceTable = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/salestask");
+      const res = await fetch(API_ENDPOINTS.TASKS.BASE);
       const data = await res.json();
       setTasks(data.tasks || []);
     } catch (err) {
@@ -76,7 +77,7 @@ const FinanceTable = () => {
   }, []);
 
   const fetchSalesData = () => {
-    fetch("http://localhost:3000/api/salestask")
+    fetch(API_ENDPOINTS.TASKS.BASE)
       .then((res) => res.json())
       .then((data) => {
         setSalesData(data);
@@ -109,7 +110,7 @@ const FinanceTable = () => {
   const handleMarkAsDone = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/salestask/done/${id}`,
+        `${API_ENDPOINTS.TASKS.BASE}/done/${id}`,
         {
           method: "PUT",
         }
@@ -132,7 +133,7 @@ const FinanceTable = () => {
   const handleMarkAsDefault = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/salestask/default/${id}`,
+        `${API_ENDPOINTS.TASKS.BASE}/default/${id}`,
         {
           method: "PUT",
         }
@@ -164,7 +165,7 @@ const FinanceTable = () => {
   const handleDateSubmit = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/salestask/${editingId}`,
+        `${API_ENDPOINTS.TASKS.BASE}/${editingId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -504,7 +505,7 @@ const FinanceTable = () => {
               <button
                 onClick={async () => {
                   const response = await fetch(
-                    `http://localhost:3000/api/salestask/${editItem._id}`,
+                    `${API_ENDPOINTS.TASKS.BASE}/${editItem._id}`,
                     {
                       method: "PUT",
                       headers: {

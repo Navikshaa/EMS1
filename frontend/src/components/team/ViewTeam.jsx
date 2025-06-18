@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Pencil, Plus, X, Trash } from "lucide-react";
 import Modal from "./Modal";
+import API_ENDPOINTS from "../../config/api";
 
 const ViewTeam = () => {
   const { id } = useParams();
@@ -16,7 +17,7 @@ const ViewTeam = () => {
     const fetchTeam = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/team/${id}`,
+          `${API_ENDPOINTS.TEAM.BASE}/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -40,7 +41,7 @@ const ViewTeam = () => {
 
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/employee`, {
+        const response = await axios.get(API_ENDPOINTS.EMPLOYEE.BASE, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -58,13 +59,13 @@ const ViewTeam = () => {
   const getImageUrl = (path) => {
     if (!path) return "https://www.gravatar.com/avatar/?d=mp&f=y";
     const cleaned = path.replace("public\\", "").replace(/\\/g, "/");
-    return `http://localhost:3000/${cleaned}`;
+    return `${API_ENDPOINTS}/${cleaned}`;
   };
 
   const handleLeaderChange = async (leaderUserId) => {
     try {
       await axios.put(
-        `http://localhost:3000/api/team/${id}/leader`,
+        `${API_ENDPOINTS.TEAM.BASE}/${id}/leader`,
         { leaderUserId },
         {
           headers: {
@@ -98,7 +99,7 @@ const ViewTeam = () => {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/team/${id}/members`,
+        `${API_ENDPOINTS.TEAM.BASE}/${id}/members`,
         { memberUserIds: newMembers.map((m) => m._id) },
         {
           headers: {
@@ -119,7 +120,7 @@ const ViewTeam = () => {
     if (!window.confirm("Are you sure you want to delete this team?")) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/team/${id}`, {
+      await axios.delete(`${API_ENDPOINTS.TEAM.BASE}/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

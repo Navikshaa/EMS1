@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./team.css";
+import API_ENDPOINTS from "../../config/api";
 
 const TeamList = () => {
   const [groupedTeams, setGroupedTeams] = useState({});
 
   const fetchTeams = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/team", {
+      const response = await axios.get(API_ENDPOINTS.TEAM.BASE, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -43,7 +44,7 @@ const TeamList = () => {
   const getCleanImageUrl = (team_dp) => {
     if (!team_dp) return "https://via.placeholder.com/100";
     const cleanedPath = team_dp.replace("public\\", "").replace(/\\/g, "/");
-    return `http://localhost:3000/${cleanedPath}`;
+    return `${API_ENDPOINTS}/${cleanedPath}`;
   };
 
   return (

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import TrainingCertificate from "./VerifyTraining";
 import InternshipCertificate from "./VerifyInternship";
+import API_ENDPOINTS from "../../config/api";
 
 export default function VerifyCertificate() {
   const { id } = useParams();
@@ -22,7 +23,7 @@ export default function VerifyCertificate() {
       try {
         const [res] = await Promise.all([
           axios.get(
-            `http://localhost:3000/api/salestask/certificate/training/${id}`
+            `${API_ENDPOINTS.TASKS.BASE}/certificate/training/${id}`
           ),
           new Promise((resolve) => setTimeout(resolve, 1000)), // 1 seconds delay
         ]);

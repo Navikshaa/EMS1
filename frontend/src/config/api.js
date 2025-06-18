@@ -36,6 +36,16 @@ export const API_ENDPOINTS =  {
 
   },
 
+  //Team endpoints
+  TEAM: {
+    BASE: `${API_BASE_URL}/api/team`,
+    GET_ALL: `${API_BASE_URL}/api/team`,
+    GET_ONE: (id) => `${API_BASE_URL}/api/team/${id}`,
+    CREATE: `${API_BASE_URL}/api/team/add`,
+    UPDATE: (id) => `${API_BASE_URL}/api/team/${id}`,
+    DELETE: (id) => `${API_BASE_URL}/api/team/${id}`,
+  },
+
   //LEAVE endpoints
   LEAVE: {
     BASE: `${API_BASE_URL}/api/leave`,
@@ -45,7 +55,15 @@ export const API_ENDPOINTS =  {
     UPDATE: (id) => `${API_BASE_URL}/api/leave/${id}`,
     DELETE: (id) => `${API_BASE_URL}/api/leave/${id}`,
   },
-
+  //Team endpoints
+  TEAM: {
+    BASE: `${API_BASE_URL}/api/team`,
+    GET_ALL: `${API_BASE_URL}/api/team/add`,
+    GET_ONE: (id) => `${API_BASE_URL}/api/team/${id}`,
+    CREATE: `${API_BASE_URL}/api/team`,
+    UPDATE: (id) => `${API_BASE_URL}/api/team/${id}`,
+    DELETE: (id) => `${API_BASE_URL}/api/team/${id}`,
+  },
   // Admin Edit View 
   ADMIN_EDIT: {
     BASE: `${API_BASE_URL}/api/login-history`,
@@ -95,7 +113,33 @@ export const API_ENDPOINTS =  {
     CREATE: `${API_BASE_URL}/api/message`,
     DELETE: (id) => `${API_BASE_URL}/api/message/${id}`,
   },
+  //CERTIFICATE endpoints
+  CERTIFICATE: {
+    BASE: `${API_BASE_URL}/api/certificate`,
+    GET_ALL: `${API_BASE_URL}/api/certificate/generate`,
+    GET_ONE: `${API_BASE_URL}/api/internship/generate`,
+    CREATE: `${API_BASE_URL}/api/offer-letter/generate`,
+    UPDATE: (id) => `${API_BASE_URL}/api/certificate/${id}`,
+    DELETE: (id) => `${API_BASE_URL}/api/certificate/${id}`,
+  },
 
+  //Salestask endpoinsts  
+  TASKS: {
+    BASE: `${API_BASE_URL}/api/salestask`,
+    GET_ALL: `${API_BASE_URL}/api/task/employee`,
+    CREATE: `${API_BASE_URL}/api/task`,
+    GET_ONE: `${API_BASE_URL}/api/targets`,
+  },
+
+  //TARGET endpoints
+  TARGET: {
+    BASE: `${API_BASE_URL}/api/targets`,
+    GET_ALL: `${API_BASE_URL}/api/target`,
+    GET_ONE: (id) => `${API_BASE_URL}/api/target/${id}`,
+    CREATE: `${API_BASE_URL}/api/target`,
+    UPDATE: (id) => `${API_BASE_URL}/api/target/${id}`,
+    DELETE: (id) => `${API_BASE_URL}/api/target/${id}`,
+  },
   //Paasword endpoints
   PASSWORD: {
     BASE: `${API_BASE_URL}/api/password`,

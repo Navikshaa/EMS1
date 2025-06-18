@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../../context/authContext";
+import API_ENDPOINTS from "../../../config/api";
 
 const programTypes = ["Autonomous Learning", "Mentor Sync", "Accelerator"];
 
@@ -33,7 +34,7 @@ const AddSalesForm = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          `http://localhost:3000/api/employee/user/${user._id}`,
+          `${API_ENDPOINTS.EMPLOYEE.BASE}/user/${user._id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -48,7 +49,7 @@ const AddSalesForm = () => {
     const fetchMarketingSources = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/api/employee/designation-name/Marketing"
+          `${API_ENDPOINTS.EMPLOYEE.BASE}/designation-name/Marketing`
         );
         const employees = res.data || [];
         setMarketingSources(employees.map((emp) => emp.name));
@@ -85,7 +86,7 @@ const AddSalesForm = () => {
     e.preventDefault();
     try {
       const payload = { ...formData, name: employeeName };
-      await axios.post("http://localhost:3000/api/salestask/add", payload);
+      await axios.post(`${API_ENDPOINTS.TASKS.BASE}/add`, payload);
       setMessage("✅ Customer details added successfully!");
       setFormData({
         customer_name: "",

@@ -3,6 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import ItModalContent from "./ModalContent/ItModalContent";
 import SalesModalContent from "./ModalContent/SalesModalContent";
 import MarketModalContent from "./ModalContent/MarketModalContent";
+import API_ENDPOINTS from "../../config/api";
 
 const Tasklist = () => {
   const { id } = useParams();
@@ -31,7 +32,7 @@ const Tasklist = () => {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-          `http://localhost:3000/api/department/${id}`,
+          `${API_ENDPOINTS.DEPARTMENT.BASE}/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -62,7 +63,7 @@ const Tasklist = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `http://localhost:3000/api/employee/users/roles/department/${department._id}`,
+          `${API_ENDPOINTS.EMPLOYEE.BASE}/users/roles/department/${department._id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -124,7 +125,7 @@ const Tasklist = () => {
       formData.append("endDate", dateRange[1].toISOString());
 
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/api/task/assign", {
+      const res = await fetch(`${API_ENDPOINTS.TASKS.CREATE}/assign`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -157,7 +158,7 @@ const Tasklist = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/api/targets", {
+      const res = await fetch(API_ENDPOINTS.TARGET.BASE, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -190,7 +191,7 @@ const Tasklist = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/api/targets", {
+      const res = await fetch(API_ENDPOINTS.TARGET.BASE, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

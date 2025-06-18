@@ -3,6 +3,7 @@ import QRCode from "react-qr-code";
 import html2canvas from "html2canvas";
 import { FaLock } from "react-icons/fa";
 import templateImage from "../../assets/templates/internship_template.jpg";
+import API_ENDPOINTS from "../../config/api";
 
 const InternshipCertificate = ({ internship_certificate_id }) => {
   const [data, setData] = useState(null);
@@ -12,7 +13,7 @@ const InternshipCertificate = ({ internship_certificate_id }) => {
   useEffect(() => {
     if (internship_certificate_id) {
       fetch(
-        `http://localhost:3000/api/salestask/certificate/internship/${internship_certificate_id}`
+        `${API_ENDPOINTS.TASKS.BASE}/certificate/internship/${internship_certificate_id}`
       )
         .then((res) => res.json())
         .then((res) => setData(res[0]))
@@ -177,7 +178,7 @@ const InternshipCertificate = ({ internship_certificate_id }) => {
               src={
                 upload_image.startsWith("http")
                   ? upload_image
-                  : `http://localhost:3000/${upload_image}`
+                  : `${API_ENDPOINTS}/${upload_image}`
               }
               alt="Uploaded"
               className="w-full h-full object-cover"

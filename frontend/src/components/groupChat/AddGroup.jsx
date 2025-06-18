@@ -120,7 +120,7 @@ const AddGroup = () => {
                   >
                     <div className="flex items-center gap-3">
                       <img
-                        src={`http://localhost:3000/${emp.userId.avatar?.replace("public/", "")}`}
+                        src={`${API_ENDPOINTS}/${emp.userId.avatar?.replace("public/", "")}`}
                         alt={emp.userId.name}
                         className="w-8 h-8 rounded-full object-cover border"
                       />

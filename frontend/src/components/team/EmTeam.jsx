@@ -4,12 +4,13 @@ import { Link } from "react-router-dom";
 import "./team.css";
 import Team from "../../assets/images/Team.jpg"
 import BottomTeam from "../../assets/images/TeamBottomlogo.png"
+import API_ENDPOINTS from "../../config/api";
 
 // Clean image path
 const getCleanImageUrl = (team_dp) => {
   if (!team_dp) return "https://via.placeholder.com/100";
   const cleanedPath = team_dp.replace("public\\", "").replace(/\\/g, "/");
-  return `http://localhost:3000/${cleanedPath}`;
+  return `${API_ENDPOINTS}/${cleanedPath}`;
 };
 
 const MyTeams = () => {
@@ -21,7 +22,7 @@ const MyTeams = () => {
 
   const fetchMyTeams = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/team/user/${userId}`);
+      const res = await fetch(`${API_ENDPOINTS.TEAM.BASE}/user/${userId}`);
       const data = await res.json();
       setTeams(data.teams || []);
       

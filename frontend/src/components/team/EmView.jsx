@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { X } from "lucide-react";
+import API_ENDPOINTS from "../../config/api";
 
 const EmViewTeam = () => {
   const { id } = useParams();
@@ -13,7 +14,7 @@ const EmViewTeam = () => {
   // Fetch the team info
   const fetchTeam = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/team/${id}`, {
+      const response = await axios.get(`${API_ENDPOINTS.TEAM.BASE}/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -26,7 +27,7 @@ const EmViewTeam = () => {
         // Fetch leader employee data
         if (teamData.leaderUserId?._id) {
           const leaderRes = await axios.get(
-            `http://localhost:3000/api/employee/${teamData.leaderUserId._id}`,
+            `${API_ENDPOINTS.EMPLOYEE.BASE}/${teamData.leaderUserId._id}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -41,7 +42,7 @@ const EmViewTeam = () => {
         const memberData = await Promise.all(
           members.map(async (member) => {
             const res = await axios.get(
-              `http://localhost:3000/api/employee/${member._id}`,
+              `${API_ENDPOINTS.EMPLOYEE.BASE}/${member._id}`,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -64,14 +65,14 @@ const EmViewTeam = () => {
 
   const getProfileImage = (employee) => {
     return employee?.userId?.profileImage
-      ? `http://localhost:3000/uploads/${employee.userId.profileImage}`
+      ? `${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/${employee.userId.profileImage}`
       : "https://www.gravatar.com/avatar/?d=mp&f=y";
   };
 
   const getTeamImage = (path) => {
     if (!path) return "https://www.gravatar.com/avatar/?d=mp&f=y";
     const cleaned = path.replace("public\\", "").replace(/\\/g, "/");
-    return `http://localhost:3000/${cleaned}`;
+    return `${API_ENDPOINTS}/${cleaned}`;
   };
 
   if (!team) return <div className="text-center mt-10">Loading...</div>;

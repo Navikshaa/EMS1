@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import API_ENDPOINTS from "../../config/api";
 
 const Rolelist = () => {
   const { id } = useParams();
@@ -17,7 +18,7 @@ const Rolelist = () => {
 
         // Fetch department info
         const depRes = await fetch(
-          `http://localhost:3000/api/department/${id}`,
+          `${API_ENDPOINTS.DEPARTMENT.BASE}/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -27,7 +28,7 @@ const Rolelist = () => {
 
         // Fetch roles grouped by role
         const roleRes = await fetch(
-          `http://localhost:3000/api/employee/users/roles/department/${id}`,
+          `${API_ENDPOINTS.EMPLOYEE.BASE}/users/roles/department/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

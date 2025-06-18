@@ -106,7 +106,7 @@ const EmployeeProfile = () => {
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md bg-white flex items-center justify-center">
             {employee?.userId?.profileImage ? (
               <img
-                src={`http://localhost:3000/uploads/${employee.userId.profileImage}`}
+                src={`${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/${employee.userId.profileImage}`}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />

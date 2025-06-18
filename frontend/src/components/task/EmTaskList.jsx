@@ -11,8 +11,9 @@ import MarketTable from "./TaskStatus/MarketTable";
 import MarketTargetList from "./TaskStatus/MarketTarget";
 import OpTable from "./TaskStatus/OpTable";
 import OpTargetList from "./TaskStatus/OpTarget";
-import FinanceTargetList from "./TaskStatus/FInanceTargetlist";
+import FinanceTargetList from "./TaskStatus/FinanceTargetlist";
 import FinanceTable from "./TaskStatus/FinanceTable";
+import API_ENDPOINTS from "../../config/api";
 
 const EmTasklist = () => {
   const { id } = useParams();
@@ -55,7 +56,7 @@ const EmTasklist = () => {
         const token = localStorage.getItem("token");
 
         const depRes = await fetch(
-          `http://localhost:3000/api/department/${id}`,
+          `${API_ENDPOINTS.DEPARTMENT.BASE}/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -84,7 +85,7 @@ const EmTasklist = () => {
 
         if (user?._id) {
           const empRes = await fetch(
-            `http://localhost:3000/api/employee/user/${user._id}`,
+            `${API_ENDPOINTS.EMPLOYEE.BASE}/user/${user._id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }

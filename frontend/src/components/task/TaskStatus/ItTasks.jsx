@@ -12,6 +12,7 @@ import QueryModal from "../../task/modal/QueryModal";
 import TimeModal from "../../task/modal/TimeModal";
 import DoneModal from "../../task/modal/DoneModal";
 import ViewModal from "../../task/modal/ViewModal";
+import API_ENDPOINTS from "../../../config/api";
 
 // 🚫 Temporarily commented if causing Vite 500 error
 // import ItTasks from "./TaskStatus/ItTasks";
@@ -57,10 +58,10 @@ const EmTasklist = () => {
         const token = localStorage.getItem("token");
 
         const [depRes, subDepRes] = await Promise.all([
-          fetch(`http://localhost:3000/api/department/${id}`, {
+          fetch(`${API_ENDPOINTS.DEPARTMENT.BASE}/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://localhost:3000/api/department/${id}/subdepartments`, {
+          fetch(`${API_ENDPOINTS.DEPARTMENT.BASE}/${id}/subdepartments`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -81,7 +82,7 @@ const EmTasklist = () => {
 
         if (user?._id) {
           const empRes = await fetch(
-            `http://localhost:3000/api/employee/user/${user._id}`,
+            `${API_ENDPOINTS.EMPLOYEE.BASE}/user/${user._id}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -92,7 +93,7 @@ const EmTasklist = () => {
 
           if (userEmp?.name) {
             const taskRes = await fetch(
-              `http://localhost:3000/api/task/employee/${userEmp.name}`,
+              `${API_ENDPOINTS.TASKS.GET_ALL}/${userEmp.name}`,
               {
                 headers: { Authorization: `Bearer ${token}` },
               }
@@ -119,7 +120,7 @@ const EmTasklist = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `http://localhost:3000/api/team/by-designation/${selectedSubDep}`,
+          `${API_ENDPOINTS.TEAM.BASE}/by-designation/${selectedSubDep}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -294,7 +295,7 @@ const EmTasklist = () => {
           const token = localStorage.getItem("token");
           try {
             const response = await fetch(
-              `http://localhost:3000/api/task/${currentQueryTaskId}`,
+              `${API_ENDPOINTS.TASKS.CREATE}/${currentQueryTaskId}`,
               {
                 method: "PUT",
                 headers: {

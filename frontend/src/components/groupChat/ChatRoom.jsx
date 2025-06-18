@@ -306,7 +306,7 @@ const ChatRoom = () => {
 
     try {
       const res = await axios.post(
-        `http://localhost:3000/api/messages/react/${msgId}`,
+        `${API_ENDPOINTS.MESSAGE.BASE}/react/${msgId}`,
         { emoji },
         { headers: { Authorization: `Bearer ${token}` } }
       );

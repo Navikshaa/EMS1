@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/authContext";
 import EmDptTaskList from "./EmDptTaskList";
+import API_ENDPOINTS from "../../config/api";
 
 const EmDepartmentView = () => {
   const { user, loading } = useAuth();
@@ -13,7 +14,7 @@ const EmDepartmentView = () => {
         console.log("User from context:", user);
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/employee/get-department/${user._id}`
+            `${API_ENDPOINTS.EMPLOYEE.BASE}/get-department/${user._id}`
           );
           console.log("Department API response:", response.data);
           setDepartment(response.data.department);

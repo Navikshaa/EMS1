@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
+import API_ENDPOINTS from "../config/api";
 
 
 const NewChat = () => {
@@ -16,7 +17,7 @@ const NewChat = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/employee", {
+      const res = await axios.get(API_ENDPOINTS.EMPLOYEE.BASE, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -29,8 +30,7 @@ const NewChat = () => {
 
   const startChat = async (userId) => {
     try {
-      const res = await axios.post(
-        "http://localhost:3000/api/direct-chats",
+      const res = await axios.post(API_ENDPOINTS.CHAT.BASE,
         { recipientId: userId },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -62,7 +62,7 @@ const NewChat = () => {
                 </p>
               </div>
               <img
-                src={`http://localhost:3000/${emp.userId.avatar?.replace(
+                src={`${API_ENDPOINTS}/${emp.userId.avatar?.replace(
                   "public/",
                   ""
                 )}`}

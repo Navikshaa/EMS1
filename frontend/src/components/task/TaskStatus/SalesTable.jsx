@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../context/authContext";
+import API_ENDPOINTS from "../../../config/api";
 
 const SalesTable = () => {
   const { user } = useAuth();
@@ -19,7 +20,7 @@ const SalesTable = () => {
 
   const fetchSalesData = () => {
     const employeeName = encodeURIComponent(user.name);
-    fetch(`http://localhost:3000/api/salestask/name/${employeeName}`)
+    fetch(`${API_ENDPOINTS.TASKS.BASE}/name/${employeeName}`)
       .then((res) => res.json())
       .then(setSalesData)
       .catch((err) => console.error("Fetch failed:", err));
@@ -48,7 +49,7 @@ const SalesTable = () => {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:3000/api/salestask/${id}`, {
+      await fetch(`${API_ENDPOINTS.TASKS.BASE}/${id}`, {
         method: "DELETE",
       });
       fetchSalesData();
@@ -59,7 +60,7 @@ const SalesTable = () => {
 
   const handleUpdate = async () => {
     try {
-      await fetch(`http://localhost:3000/api/salestask/${selectedItem._id}`, {
+      await fetch(`${API_ENDPOINTS.TASKS.BASE}/${selectedItem._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(selectedItem),
