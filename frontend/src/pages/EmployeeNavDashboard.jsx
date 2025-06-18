@@ -15,7 +15,7 @@ const EmployeeDashboard = () => {
       </div>
 
       {/* Fixed Navbar on the right */}
-      <div className="w-64 h-screen fixed right-0 top-0 bg-gray-100 shadow-md z-10">
+      <div className="w-48 h-screen fixed right-0 top-0 bg-gray-100 shadow-md z-10">
         <Navbar />
       </div>
     </div>

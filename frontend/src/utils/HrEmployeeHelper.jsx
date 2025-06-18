@@ -15,7 +15,7 @@ export const EmployeeButtons = ({ Id }) => {
       <button
         title="View"
         className={buttonBaseClasses}
-        onClick={() => navigate(`/admin-dashboard/employees/${Id}`)}
+        onClick={() => navigate(`/employee-dashboard/employees/${Id}`)}
       >
         <FaEye />
         View
@@ -23,7 +23,7 @@ export const EmployeeButtons = ({ Id }) => {
       <button
         title="Edit"
         className={buttonBaseClasses}
-        onClick={() => navigate(`/admin-dashboard/employees/edit/${Id}`)}
+        onClick={() => navigate(`/employee-dashboard/employees/edit/${Id}`)}
       >
         <FaEdit />
         Edit

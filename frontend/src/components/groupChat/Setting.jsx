@@ -17,8 +17,9 @@ const SettingsPanel = () => {
   const [success, setSuccess] = useState("");
   const location = useLocation();
   const [chatNotification, setChatNotification] = useState(false);
-const [groupNotification, setGroupNotification] = useState(true);
+  const [groupNotification, setGroupNotification] = useState(true);
 
+  const user = JSON.parse(localStorage.getItem("user")); // ⬅️ get user from localStorage
 
   useEffect(() => {
     fetchGroups();
@@ -87,9 +88,13 @@ const [groupNotification, setGroupNotification] = useState(true);
       if (groupDP) formData.append("group_dp", groupDP);
       members.forEach((id) => formData.append("members", id));
 
-      const res = await axios.post("http://localhost:3000/api/group/add", formData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const res = await axios.post(
+        "http://localhost:3000/api/group/add",
+        formData,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
 
       if (res.data.success) {
         setSuccess("Group Created ✅");
@@ -151,7 +156,9 @@ const [groupNotification, setGroupNotification] = useState(true);
           <div className="w-full max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
             {!showCreateForm ? (
               <>
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">Groups</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                  Groups
+                </h3>
                 <div className="space-y-3">
                   {groups.map((group) => (
                     <div
@@ -173,18 +180,24 @@ const [groupNotification, setGroupNotification] = useState(true);
                     </div>
                   ))}
                 </div>
-                <div className="mt-6 flex justify-center">
-                  <button
-                    onClick={() => setShowCreateForm(true)}
-                    className="px-6 py-2 bg-blue-500 text-white rounded-full shadow hover:bg-blue-600 transition"
-                  >
-                    Create New
-                  </button>
-                </div>
+
+                {/* ✅ Show button only for admin */}
+                {user?.role === "admin" && (
+                  <div className="mt-6 flex justify-center">
+                    <button
+                      onClick={() => setShowCreateForm(true)}
+                      className="px-6 py-2 bg-blue-500 text-white rounded-full shadow hover:bg-blue-600 transition"
+                    >
+                      Create New
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
               <>
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">Create New Group</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                  Create New Group
+                </h3>
                 <input
                   type="text"
                   placeholder="Enter Team Name"
@@ -195,10 +208,19 @@ const [groupNotification, setGroupNotification] = useState(true);
 
                 <div className="flex justify-center mb-6">
                   <label className="cursor-pointer relative inline-block">
-                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
                     <div className="w-20 h-20 rounded-full border-2 border-gray-300 flex items-center justify-center">
                       {previewImage ? (
-                        <img src={previewImage} alt="Group" className="w-full h-full object-cover rounded-full" />
+                        <img
+                          src={previewImage}
+                          alt="Group"
+                          className="w-full h-full object-cover rounded-full"
+                        />
                       ) : (
                         <FiUpload className="text-2xl text-gray-500" />
                       )}
@@ -274,7 +296,9 @@ const [groupNotification, setGroupNotification] = useState(true);
                 </button>
 
                 {success && (
-                  <p className="text-green-600 text-center mt-4 font-medium">{success}</p>
+                  <p className="text-green-600 text-center mt-4 font-medium">
+                    {success}
+                  </p>
                 )}
               </>
             )}
@@ -282,39 +306,47 @@ const [groupNotification, setGroupNotification] = useState(true);
         )}
 
         {activeTab === "notifications" && (
-            <div className="w-full max-w-md mx-auto bg-white bg-opacity-70 rounded-lg shadow-lg p-6">
-  <h3 className="text-lg font-semibold mb-6 text-gray-800">Notification</h3>
+          <div className="w-full max-w-md mx-auto bg-white bg-opacity-70 rounded-lg shadow-lg p-6">
+            <h3 className="text-lg font-semibold mb-6 text-gray-800">
+              Notification
+            </h3>
 
-  <div className="flex justify-between items-center mb-4">
-    <span className="text-gray-700 font-medium">Chat Notification:</span>
-    <label className="relative inline-flex items-center cursor-pointer">
-      <input
-        type="checkbox"
-        className="sr-only peer"
-        checked={chatNotification}
-        onChange={() => setChatNotification(!chatNotification)}
-      />
-      <div className="w-11 h-6 bg-red-400 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-    </label>
-  </div>
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-gray-700 font-medium">
+                Chat Notification:
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={chatNotification}
+                  onChange={() => setChatNotification(!chatNotification)}
+                />
+                <div className="w-11 h-6 bg-red-400 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+              </label>
+            </div>
 
-  <div className="flex justify-between items-center mb-2">
-    <span className="text-gray-700 font-medium">Group Notification:</span>
-    <label className="relative inline-flex items-center cursor-pointer">
-      <input
-        type="checkbox"
-        className="sr-only peer"
-        checked={groupNotification}
-        onChange={() => setGroupNotification(!groupNotification)}
-      />
-      <div className="w-11 h-6 bg-red-400 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-    </label>
-  </div>
-</div>
-
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-gray-700 font-medium">
+                Group Notification:
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={groupNotification}
+                  onChange={() => setGroupNotification(!groupNotification)}
+                />
+                <div className="w-11 h-6 bg-red-400 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+              </label>
+            </div>
+          </div>
         )}
+
         {activeTab === "privacy" && (
-          <div className="text-gray-800 text-lg">🔒 Privacy options will appear here.</div>
+          <div className="text-gray-800 text-lg">
+            🔒 Privacy options will appear here.
+          </div>
         )}
       </div>
     </div>

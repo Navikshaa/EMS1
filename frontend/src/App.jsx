@@ -219,6 +219,7 @@ function App() {
           <Route path="leaves" element={<Leavetable />} />
           <Route path="leaves/:id" element={<DetailLeave />} />
 
+          <Route path="employees/:id" element={<View />} />
           <Route path="employees/edit/:id" element={<EditEmployee />} />
 
           <Route path="groups" element={<ChatLayout />}>

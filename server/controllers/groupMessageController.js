@@ -13,11 +13,15 @@ export const addGroupMessage = async (req, res) => {
       return res.status(404).json({ success: false, error: "Group not found" });
     }
 
-    const isMember = group.members.some(member => member.toString() === req.user._id.toString());
+    const isMember = group.members.some(
+      (member) => member.toString() === req.user._id.toString()
+    );
 
     // Allow only group members or admin
     if (!isMember && req.user.role !== "admin") {
-      return res.status(403).json({ success: false, error: "You are not a member of this group" });
+      return res
+        .status(403)
+        .json({ success: false, error: "You are not a member of this group" });
     }
 
     const newMessage = new GroupMessage({
@@ -36,8 +40,6 @@ export const addGroupMessage = async (req, res) => {
     res.status(500).json({ success: false, error: "Failed to send message" });
   }
 };
-
-
 
 export const getGroupMessages = async (req, res) => {
   try {
@@ -74,7 +76,6 @@ export const getGroupMessages = async (req, res) => {
   }
 };
 
-
 export const updateGroupMessage = async (req, res) => {
   try {
     const updated = await GroupMessage.findByIdAndUpdate(
@@ -99,40 +100,46 @@ export const deleteGroupMessage = async (req, res) => {
 
 // React to a message with emoji
 export const reactToMessage = async (req, res) => {
-  const { messageId } = req.params;
+  const { msgId } = req.params; // ✅ renamed from messageId to match frontend
   const { emoji } = req.body;
-  const userId = req.user._id; // Corrected from req.user.id
+  const userId = req.user._id;
 
   try {
-    const message = await GroupMessage.findById(messageId);
+    const message = await GroupMessage.findById(msgId); // ✅ uses msgId
     if (!message) {
-      return res.status(404).json({ success: false, error: "Message not found" });
+      return res
+        .status(404)
+        .json({ success: false, error: "Message not found" });
     }
 
-    // Remove previous reaction from the same user (optional behavior)
+    // Remove previous reaction by the same user (to allow reaction update)
     message.reactions = message.reactions.filter(
       (reaction) => reaction.userId.toString() !== userId.toString()
     );
 
-    // Add new reaction
+    // Add the new reaction
     message.reactions.push({ userId, emoji });
 
     await message.save();
-    await message.populate("reactions.userId", "name"); // Optional: enrich response
+    await message.populate("reactions.userId", "name"); // Optional: populate user info
 
     res.json({ success: true, message });
   } catch (err) {
     console.error("React error:", err);
-    res.status(500).json({ success: false, error: "Failed to react to message" });
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to react to message" });
   }
 };
-
 
 export const forwardMessage = async (req, res) => {
   try {
     const { originalMessageId, targetGroupId } = req.body;
     const originalMessage = await GroupMessage.findById(originalMessageId);
-    if (!originalMessage) return res.status(404).json({ success: false, error: "Original message not found" });
+    if (!originalMessage)
+      return res
+        .status(404)
+        .json({ success: false, error: "Original message not found" });
 
     const newMessage = new GroupMessage({
       groupId: targetGroupId,
@@ -147,7 +154,8 @@ export const forwardMessage = async (req, res) => {
     res.status(201).json({ success: true, message: newMessage });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, error: "Failed to forward message" });
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to forward message" });
   }
 };
-
