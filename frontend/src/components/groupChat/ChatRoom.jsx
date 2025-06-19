@@ -7,6 +7,8 @@ import EmojiPicker from "emoji-picker-react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiSend, FiPaperclip } from "react-icons/fi";
 import API_ENDPOINTS from "../../config/api";
+import backgroundImage from "../../assets/images/chat_background[1].png"; // ✅ your background image
+
 
 const EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "👏", "🔥"];
 
@@ -323,20 +325,21 @@ const ChatRoom = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-blue-100">
+    <div className="h-screen flex flex-col bg-transparent" 
+    >
       {/* Header */}
-      <div className="bg-white flex items-center justify-between px-4 py-2 shadow-md">
-        <div className="flex items-center gap-3">
+<div className="bg-transparent flex items-center justify-between px-4 py-2">
+          <div className="flex items-center gap-3">
           <img
             src={
               group?.group_dp
                 ? getFileURL(group.group_dp)
                 : "https://via.placeholder.com/100"
             }
-            className="w-10 h-10 rounded-full object-cover"
+            className="w-15 h-15 rounded-full object-cover"
             alt="group"
           />
-          <h2 className="text-lg font-semibold">{group?.group_name}</h2>
+          <h2 className="text-lg font-bold">{group?.group_name}</h2>
         </div>
         <div className="relative">
           <BsThreeDotsVertical
@@ -372,7 +375,7 @@ const ChatRoom = () => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="flex-1 p-6 overflow-y-auto">
         {messages.map((msg) => {
           const isOwn = msg.sender._id === user._id;
           const canEdit = isOwn || user.role === "admin";
@@ -586,7 +589,7 @@ const ChatRoom = () => {
       )}
 
       {/* Input */}
-      <div className="bg-white px-4 py-3 flex items-center gap-2 border-t relative">
+      <div className="bg-transparent px-4 py-3 flex items-center gap-2 border-t relative">
         <div className="relative flex-1">
           <input
             type="text"

@@ -72,7 +72,7 @@ const EmployeeNavbar = () => {
   }, [user]);
 
   return (
-    <div className="relative w-full sm:w-51 bg-green-100 rounded-2xl p-4 shadow-md text-center max-h-[95vh] flex flex-col">
+    <div className="relative w-full lg:w-55 bg-green-100 rounded-2xl p-4 shadow-md text-center max-h-[105vh] flex flex-col">
       {/* Scrollable Content */}
       <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent flex-grow  ">
         {/* Profile */}
@@ -90,7 +90,7 @@ const EmployeeNavbar = () => {
 
         <h3 className="text-lg font-bold text-gray-800">{user?.name}</h3>
         <a
-          href={`/profile/${user?._id}`}
+          href={`/employee-dashboard/profile/${user?._id}`}
           className="text-sm text-blue-600 hover:underline"
         >
           View Profile

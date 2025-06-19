@@ -119,7 +119,7 @@ const GroupList = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen w-72 bg-white border-r shadow-md relative">
+    <div className="flex flex-col h-screen w-full bg-white border-r shadow-lg relative">
       {/* Top Banner */}
       <div
         className="relative w-full h-36 bg-cover bg-center"
