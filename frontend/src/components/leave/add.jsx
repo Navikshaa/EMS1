@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import LeaveHeader from "../../assets/images/leave_task_header[1].png"
-import API_ENDPOINTS from "../../config/api";
+import LeaveHeader from "../../assets/images/leave_task_header[1].png";
+import { FaUpload } from "react-icons/fa"; // 📤 Upload icon
 
 const ApplyLeave = () => {
   const { user } = useAuth();
@@ -26,6 +26,7 @@ const ApplyLeave = () => {
 
   const [selectedDays, setSelectedDays] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [medicalProof, setMedicalProof] = useState(null);
 
   useEffect(() => {
     fetchLeaves();
@@ -33,11 +34,14 @@ const ApplyLeave = () => {
 
   const fetchLeaves = async () => {
     try {
-      const res = await axios.get(`${API_ENDPOINTS.LEAVE.BASE}/${user._id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await axios.get(
+        `http://localhost:3000/api/leave/${user._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       if (res.data.success) {
         setLeaveHistory(res.data.leaves);
         updateBalances(res.data.leaves);
@@ -48,13 +52,16 @@ const ApplyLeave = () => {
   };
 
   const updateBalances = (leaves) => {
-    let casual = 24, medical = 12, earned = 12;
+    let casual = 24,
+      medical = 12,
+      earned = 12;
 
     leaves.forEach((l) => {
       if (l.status === "Rejected") return;
 
       const msPerDay = 1000 * 60 * 60 * 24;
-      const rawDays = (new Date(l.endDate) - new Date(l.startDate)) / msPerDay + 1;
+      const rawDays =
+        (new Date(l.endDate) - new Date(l.startDate)) / msPerDay + 1;
       const days = Math.round(rawDays);
 
       if (l.leaveType === "Casual Leave") {
@@ -80,7 +87,8 @@ const ApplyLeave = () => {
   const handleCalendarChange = (range) => {
     setDateRange(range);
     if (range && range[0] && range[1]) {
-      const diff = Math.round((range[1] - range[0]) / (1000 * 60 * 60 * 24)) + 1;
+      const diff =
+        Math.round((range[1] - range[0]) / (1000 * 60 * 60 * 24)) + 1;
       setSelectedDays(diff);
     }
   };
@@ -97,19 +105,27 @@ const ApplyLeave = () => {
     }
 
     try {
-      const payload = {
-        userId: user._id,
-        leaveType: form.leaveType,
-        reason: form.reason,
-        startDate: dateRange[0],
-        endDate: dateRange[1],
-      };
+      const formData = new FormData();
+      formData.append("userId", user._id);
+      formData.append("leaveType", form.leaveType);
+      formData.append("reason", form.reason);
+      formData.append("startDate", dateRange[0]);
+      formData.append("endDate", dateRange[1]);
 
-      const res = await axios.post(API_ENDPOINTS.LEAVE.GET_ALL, payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      if (form.leaveType === "Medical Leave" && medicalProof) {
+        formData.append("medicalProof", medicalProof);
+      }
+
+      const res = await axios.post(
+        "http://localhost:3000/api/leave/add",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (res.data.success) {
         alert("Leave applied successfully!");
@@ -133,19 +149,29 @@ const ApplyLeave = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen ">
+    <div className="bg-gray-100 min-h-screen">
       {/* Leave Balances */}
       <div
         className="bg-cover bg-center py-10 px-4 mb-6"
-        style={{
-           backgroundImage: `url(${LeaveHeader})`,
-        }}
+        style={{ backgroundImage: `url(${LeaveHeader})` }}
       >
         <div className="max-w-5xl mx-auto flex justify-between gap-4">
           {[
-            { type: "CASUAL LEAVE", value: leaveBalance.casual, color: "bg-yellow-300" },
-            { type: "MEDICAL LEAVE", value: leaveBalance.medical, color: "bg-yellow-300" },
-            { type: "EARNED LEAVE", value: leaveBalance.earned, color: "bg-yellow-300" },
+            {
+              type: "CASUAL LEAVE",
+              value: leaveBalance.casual,
+              color: "bg-yellow-300",
+            },
+            {
+              type: "MEDICAL LEAVE",
+              value: leaveBalance.medical,
+              color: "bg-yellow-300",
+            },
+            {
+              type: "EARNED LEAVE",
+              value: leaveBalance.earned,
+              color: "bg-yellow-300",
+            },
           ].map((item, index) => (
             <div
               key={index}
@@ -217,7 +243,9 @@ const ApplyLeave = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Calendar */}
           <div>
-            <label className="block mb-1 font-medium text-sm">Select Date Range</label>
+            <label className="block mb-1 font-medium text-sm">
+              Select Date Range
+            </label>
             <Calendar
               selectRange
               onChange={handleCalendarChange}
@@ -225,11 +253,13 @@ const ApplyLeave = () => {
               className="w-full rounded-lg border border-gray-600 p-4"
             />
             {selectedDays > 0 && (
-              <p className="mt-2 text-gray-600">You selected {selectedDays} days</p>
+              <p className="mt-2 text-gray-600">
+                You selected {selectedDays} days
+              </p>
             )}
           </div>
 
-          {/* Leave Type + Reason */}
+          {/* Leave Type + Reason + File Upload */}
           <div className="flex flex-col gap-4">
             <select
               name="leaveType"
@@ -241,6 +271,7 @@ const ApplyLeave = () => {
               <option value="Casual Leave">Casual Leave</option>
               <option value="Medical Leave">Medical Leave</option>
             </select>
+
             <textarea
               name="reason"
               onChange={handleChange}
@@ -248,6 +279,35 @@ const ApplyLeave = () => {
               required
               className="p-2 border border-gray-300 rounded flex-1 min-h-[120px]"
             />
+
+            {form.leaveType === "Medical Leave" && (
+              <div>
+                <label className="block mb-1 font-medium text-sm">
+                  Upload Medical Proof
+                </label>
+                <label
+                  htmlFor="medicalProof"
+                  className="flex items-center gap-2 cursor-pointer bg-gray-100 border border-dashed border-gray-400 p-3 rounded hover:bg-gray-200"
+                >
+                  <span className="text-blue-600 font-semibold">
+                    Click to Upload
+                  </span>
+                  <FaUpload className="text-blue-600" />
+                </label>
+                <input
+                  id="medicalProof"
+                  type="file"
+                  accept="image/*,.pdf"
+                  onChange={(e) => setMedicalProof(e.target.files[0])}
+                  className="hidden"
+                />
+                {medicalProof && (
+                  <p className="mt-1 text-sm text-green-600">
+                    Selected: {medicalProof.name}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
