@@ -16,32 +16,38 @@ import {
 
 const router = express.Router();
 
-router.get("/", getEmployees);
+router.get("/", authMiddleware, getEmployees);
 
 router.post("/add", authMiddleware, upload.single("image"), addEmployee);
 
 // :id route
 router.get("/department/:id", authMiddleware, fetchEmployeesByDepId);
 
-router.get("/user/:userId", fetchEmployeesByUserId);
+router.get("/user/:userId", authMiddleware, fetchEmployeesByUserId);
 
 router.get("/:id", authMiddleware, getEmployee);
 
 router.put("/:id", authMiddleware, updateEmployee);
 
 // Route to get department by User ID
-router.get("/get-department/:userId", getDepartmentByUserId);
+router.get("/get-department/:userId", authMiddleware, getDepartmentByUserId);
 
 router.get(
   "/users/roles/department/:departmentId",
+  authMiddleware,
   fetchUsersGroupedByRoleInDepartment
 );
 
 router.get(
   "/users/designations/:departmentId",
+  authMiddleware,
   fetchUsersGroupedByDesignationInDepartment
 );
 
-router.get("/designation-name/:name", fetchEmployeesByDesignationName);
+router.get(
+  "/designation-name/:name",
+  authMiddleware,
+  fetchEmployeesByDesignationName
+);
 
 export default router;

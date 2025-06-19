@@ -1,5 +1,6 @@
 import express from "express";
 import getCertificate from "../controllers/trainingController.js";
+import authMiddleware from "../middleware/authMiddlware.js";
 
 const router = express.Router();
 
@@ -11,6 +12,6 @@ router.options("/generate/:id", (req, res) => {
 });
 
 // Certificate download route
-router.get("/generate/:id", getCertificate);
+router.get("/generate/:id", authMiddleware, getCertificate);
 
 export default router;

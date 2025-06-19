@@ -9,9 +9,11 @@ const teamSchema = new mongoose.Schema(
       ref: "Department",
       required: true,
     },
+
     designation: {
       type: String,
     },
+
     leaderUserId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

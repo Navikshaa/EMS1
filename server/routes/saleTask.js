@@ -14,21 +14,31 @@ import {
   updateDownloadStatus,
   getSalesByCertificateId,
 } from "../controllers/salesTaskController.js";
+import authMiddleware from "../middleware/authMiddlware.js";
 
 const router = express.Router();
 
-router.post("/add", createSale);
-router.get("/", getAllSales);
+router.post("/add", authMiddleware, createSale);
+router.get("/", authMiddleware, getAllSales);
 
-router.get("/name/:name", getSalesByName);
-router.get("/marketed-from/:marketed_from", getSalesByMarketedFrom);
+router.get("/name/:name", authMiddleware, getSalesByName);
+router.get(
+  "/marketed-from/:marketed_from",
+  authMiddleware,
+  getSalesByMarketedFrom
+);
 
-router.get("/:id", getSaleById);
-router.put("/:id", updateSale);
-router.delete("/:id", deleteSale);
-router.post("/upload-image", upload.single("image"), uploadSaleImage);
-router.delete("/delete-image/:id", deleteImage);
-router.patch("/salestask/:id/download", updateDownloadStatus);
-router.get("/certificate/:type/:id", getSalesByCertificateId);
+router.get("/:id", authMiddleware, getSaleById);
+router.put("/:id", authMiddleware, updateSale);
+router.delete("/:id", authMiddleware, deleteSale);
+router.post(
+  "/upload-image",
+  upload.single("image"),
+  authMiddleware,
+  uploadSaleImage
+);
+router.delete("/delete-image/:id", authMiddleware, deleteImage);
+router.patch("/salestask/:id/download", authMiddleware, updateDownloadStatus);
+router.get("/certificate/:type/:id", authMiddleware, getSalesByCertificateId);
 
 export default router;

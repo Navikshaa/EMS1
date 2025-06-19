@@ -47,7 +47,7 @@ const employeeSchema = new Schema({
   },
   permanentaddress: {
     type: String,
-    required: true,
+    required: false,
   },
   address1: {
     type: String,
@@ -57,7 +57,7 @@ const employeeSchema = new Schema({
   },
   correspondenceAddress: {
     type: String,
-    required: true,
+    required: false,
   },
   correspondenceAddress1: {
     type: String,
@@ -130,7 +130,7 @@ const employeeSchema = new Schema({
     default: null,
   },
   role: {
-    type:String
+    type: String,
   },
   createdAt: {
     type: Date,
