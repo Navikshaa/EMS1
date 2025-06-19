@@ -3,40 +3,42 @@ import axios from "axios";
 import DataTable from "react-data-table-component";
 import { FaEye, FaEdit, FaUserCircle, FaPlaneDeparture } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import API_ENDPOINTS from "../config/api";
+import EditEmployee from "../components/task/TaskStatus/hrTaks/EditEmployee";
 
 // 🔘 Action Buttons (Salary button removed)
 export const EmployeeButtons = ({ Id }) => {
   const navigate = useNavigate();
   const buttonBaseClasses =
     "flex items-center justify-center gap-1 border border-gray-400 text-gray-700 px-2 py-1 rounded-md text-sm hover:bg-gray-100 transition-all w-[100px]";
+  const [showModal, setShowModal] = useState(false);
 
   return (
-    <div className="flex gap-2 justify-center">
-      <button
-        title="View"
-        className={buttonBaseClasses}
-        onClick={() => navigate(`/employee-dashboard/employees/${Id}`)}
-      >
-        <FaEye />
-        View
-      </button>
-      <button
-        title="Edit"
-        className={buttonBaseClasses}
-        onClick={() => navigate(`/employee-dashboard/employees/edit/${Id}`)}
-      >
-        <FaEdit />
-        Edit
-      </button>
-      <button
-        title="Leave"
-        className={buttonBaseClasses}
-        onClick={() => navigate(`/admin-dashboard/employees/leaves/${Id}`)}
-      >
-        <FaPlaneDeparture />
-        Leave
-      </button>
+    <div className="flex flex-col items-center gap-2">
+      <div className="flex gap-2 justify-center">
+        <button
+          title="View"
+          className={buttonBaseClasses}
+          onClick={() => navigate(`/employee-dashboard/employees/${Id}`)}
+        >
+          <FaEye />
+          View
+        </button>
+        <button
+          title="Edit"
+          className={buttonBaseClasses}
+          onClick={() => setShowModal(true)}
+        >
+          <FaEdit />
+          Edit
+        </button>
+      </div>
+
+      {/* 🔽 Add Employee Modal */}
+      <EditEmployee
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        employeeId={Id} // Pass the employee ID for editing
+      />
     </div>
   );
 };
@@ -48,7 +50,7 @@ export const columns = [
     cell: (row) =>
       row.profileImage ? (
         <img
-          src={`${API_ENDPOINTS.IMAGE_UPLOAD.BASE}/${row.profileImage}`}
+          src={`http://localhost:3000/uploads/${row.profileImage}`}
           alt={row.name}
           className="w-10 h-10 rounded-full border shadow-sm object-cover"
         />
@@ -59,14 +61,14 @@ export const columns = [
   },
   {
     name: "Name",
-    selector: (row) => (
+    cell: (row) => (
       <span className="text-lg font-semibold text-gray-800">{row.name}</span>
     ),
     sortable: true,
   },
   {
     name: "Department",
-    selector: (row) => (
+    cell: (row) => (
       <span className="text-sm font-medium text-indigo-700 uppercase tracking-wide">
         {row.dep_name}
       </span>
@@ -84,7 +86,7 @@ export const columns = [
   },
   {
     name: "Status",
-    selector: (row) => (
+    cell: (row) => (
       <span className="text-sm font-medium text-indigo-700 uppercase tracking-wide">
         {row.status === "active" ? (
           <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">
@@ -101,17 +103,14 @@ export const columns = [
   {
     name: "Action",
     cell: (row) => <EmployeeButtons Id={row._id} />,
-    ignoreRowClick: true,
-    allowOverflow: true,
-    button: true,
-    width: "320px", // adjusted from 450px to better fit 3 buttons
+    width: "320px",
   },
 ];
 
 // Fetch Departments
 export const fetchDepartments = async () => {
   try {
-    const response = await axios.get(API_ENDPOINTS.DEPARTMENT.BASE, {
+    const response = await axios.get("http://localhost:3000/api/department", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -127,7 +126,7 @@ export const fetchDepartments = async () => {
 export const getEmployees = async (id) => {
   try {
     const response = await axios.get(
-      `${API_ENDPOINTS.EMPLOYEE.BASE}/department/${id}`,
+      `http://localhost:3000/api/employee/department/${id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -149,7 +148,7 @@ export const EmployeeTable = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get(API_ENDPOINTS.EMPLOYEE.BASE, {
+      const res = await axios.get("http://localhost:3000/api/employee", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -208,7 +207,7 @@ export const EmployeeTable = () => {
         customStyles={{
           table: {
             style: {
-              backgroundColor: "#f3f4f6", // gray-100
+              backgroundColor: "#f3f4f6",
             },
           },
           headRow: {
@@ -221,7 +220,7 @@ export const EmployeeTable = () => {
               fontWeight: "700",
               fontSize: "16px",
               backgroundColor: "#f3f4f6",
-              color: "#1e293b", // slate-800
+              color: "#1e293b",
               paddingTop: "8px",
               paddingBottom: "8px",
             },
